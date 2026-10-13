@@ -1,1 +1,264 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thor's Weather</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #101827;
+  color: white;
+}
+
+header {
+  background: #172b49;
+  padding: 24px 12px;
+  text-align: center;
+  border-bottom: 3px solid #38a9ff;
+}
+
+main {
+  max-width: 700px;
+  margin: auto;
+  padding: 18px;
+}
+
+.card {
+  background: #1d2b40;
+  padding: 18px;
+  margin: 18px 0;
+  border-radius: 12px;
+}
+
+input, button {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+button {
+  background: #1685e5;
+  color: white;
+  border: 0;
+  font-weight: bold;
+}
+
+#temperature {
+  font-size: 44px;
+  font-weight: bold;
+}
+
+.alert {
+  background: #54252b;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>⚡ Thor's Weather ⚡</h1>
+  <p>U.S. Weather and Severe Storm Alerts</p>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>Find Your Weather</h2>
+    <input id="city" placeholder="Enter U.S. city or ZIP code">
+    <button id="search">Get My Weather</button>
+    <p id="status">Enter a location to begin.</p>
+  </div>
+
+  <div class="card">
+    <h2 id="location">Current Weather</h2>
+    <div id="temperature">--°F</div>
+    <p id="conditions"></p>
+    <p id="wind"></p>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ Official Weather Alerts</h2>
+    <div id="alerts">Search for a location to check alerts.</div>
+  </div>
+
+</main>
+
+<footer style="text-align:center;padding:20px">
+  Weather data: Open-Meteo and the National Weather Service
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const descriptions = {
+  0: "Clear sky",
+  1: "Mostly clear",
+  2: "Partly cloudy",
+  3: "Overcast",
+  45: "Fog",
+  48: "Freezing fog",
+  51: "Light drizzle",
+  53: "Drizzle",
+  55: "Heavy drizzle",
+  61: "Light rain",
+  63: "Rain",
+  65: "Heavy rain",
+  71: "Light snow",
+  73: "Snow",
+  75: "Heavy snow",
+  80: "Rain showers",
+  81: "Heavy rain showers",
+  82: "Heavy rain showers",
+  95: "Thunderstorm",
+  96: "Thunderstorm with hail",
+  99: "Thunderstorm with heavy hail"
+};
+
+async function getWeather() {
+  const city = $("city").value.trim();
+
+  if (!city) {
+    $("status").textContent = "Enter a city or ZIP code.";
+    return;
+  }
+
+  $("status").textContent = "Searching for your location...";
+  $("alerts").textContent = "Checking official alerts...";
+
+  try {
+    const geoResponse = await fetch(
+      "https://geocoding-api.open-meteo.com/v1/search?name=" +
+      encodeURIComponent(city) +
+      "&count=10&language=en&format=json"
+    );
+
+    if (!geoResponse.ok) {
+      throw new Error("Location search failed.");
+    }
+
+    const geo = await geoResponse.json();
+
+    const place = (geo.results || []).find(
+      p => p.country_code === "US"
+    );
+
+    if (!place) {
+      throw new Error("U.S. location not found.");
+    }
+
+    $("location").textContent =
+      place.name + (place.admin1 ? ", " + place.admin1 : "");
+
+    const params = new URLSearchParams({
+      latitude: place.latitude,
+      longitude: place.longitude,
+      current:
+        "temperature_2m,apparent_temperature,weather_code," +
+        "wind_speed_10m,relative_humidity_2m",
+      temperature_unit: "fahrenheit",
+      wind_speed_unit: "mph",
+      timezone: "auto"
+    });
+
+    const weatherResponse = await fetch(
+      "https://api.open-meteo.com/v1/forecast?" + params
+    );
+
+    if (!weatherResponse.ok) {
+      throw new Error("Weather unavailable.");
+    }
+
+    const data = await weatherResponse.json();
+    const c = data.current;
+
+    $("temperature").textContent =
+      Math.round(c.temperature_2m) + "°F";
+
+    $("conditions").textContent =
+      (descriptions[c.weather_code] || "Conditions unavailable") +
+      " · Feels like " +
+      Math.round(c.apparent_temperature) +
+      "°F · Humidity " +
+      c.relative_humidity_2m + "%";
+
+    $("wind").textContent =
+      "Wind: " + Math.round(c.wind_speed_10m) + " mph";
+
+    try {
+      const response = await fetch(
+        "https://api.weather.gov/alerts/active?point=" +
+        place.latitude + "," + place.longitude,
+        {
+          headers: {
+            Accept: "application/geo+json"
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Alert request failed.");
+      }
+
+      const result = await response.json();
+      const features = result.features || [];
+
+      $("alerts").replaceChildren();
+
+      if (!features.length) {
+        $("alerts").textContent =
+          "No active alerts were returned for this location.";
+      } else {
+        features.forEach(feature => {
+          const p = feature.properties;
+          const box = document.createElement("div");
+          box.className = "alert";
+
+          const title = document.createElement("h3");
+          title.textContent = p.event || "Weather Alert";
+
+          const detail = document.createElement("p");
+          detail.textContent =
+            p.headline || p.areaDesc || "";
+
+          box.append(title, detail);
+          $("alerts").appendChild(box);
+        });
+      }
+    } catch {
+      $("alerts").textContent =
+        "Alerts unavailable. Check https://weather.gov";
+    }
+
+    $("status").textContent = "Weather lookup complete.";
+
+  } catch (error) {
+    $("status").textContent =
+      error.message || "Unable to load weather. Try again.";
+
+    $("alerts").textContent =
+      "Could not check alerts. Please try again.";
+  }
+}
+
+$("search").addEventListener("click", getWeather);
+
+$("city").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    getWeather();
+  }
+});
+</script>
+
+</body>
+</html>
