@@ -327,7 +327,20 @@ function addLightningLocation() {
   }
 
   input.value = "";
-  showLightningLocations();
+  function showLightningLocations() {
+  const locations = JSON.parse(
+    localStorage.getItem("thorsLightningLocations") || "[]"
+  );
+
+  const container = document.getElementById("savedLightningLocations");
+  container.replaceChildren();
+
+  locations.forEach(location => {
+    const item = document.createElement("p");
+    item.textContent = "📍 " + location;
+    container.appendChild(item);
+  });
+  }
 }
 
 function showLightningLocations() {
