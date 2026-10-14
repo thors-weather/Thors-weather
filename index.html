@@ -401,18 +401,18 @@ item.appendChild(button);
 
 
 showLightningLocations();
-const searchButton = document.getElementById("search");
 
-searchButton.addEventListener("click", function () {
-  const mjolnir = document.querySelector(".mjolnir-img");
 
-  if (mjolnir) {
-    mjolnir.animate(
+document.getElementById("search").addEventListener("click", function () {
+  const hammer = document.querySelector(".mjolnir-img");
+
+  if (hammer) {
+    hammer.animate(
       [
         { transform: "scale(1)", filter: "brightness(1)" },
-        { transform: "scale(2.8)", filter: "brightness(3)" },
-        { transform: "scale(1.8)", filter: "brightness(1.2)" },
-        { transform: "scale(3)", filter: "brightness(4)" },
+        { transform: "scale(3)", filter: "brightness(5)" },
+        { transform: "scale(1.5)", filter: "brightness(1)" },
+        { transform: "scale(3)", filter: "brightness(5)" },
         { transform: "scale(1)", filter: "brightness(1)" }
       ],
       {
@@ -422,8 +422,6 @@ searchButton.addEventListener("click", function () {
     );
   }
 });
-
-
 </script>
 
 <section style="padding:20px;text-align:center;background:#172b49;border-radius:12px;margin:20px;">
