@@ -388,11 +388,14 @@ function showLightningLocations() {
   locations.forEach(location => {
     const item = document.createElement("p");
     item.textContent = "📍 " + location + " ";
+    item.style.cursor = "pointer";
 
+    item.onclick = function () { document.getElementById("city").value = location; getWeather(); };
     const button = document.createElement("button");
     button.textContent = "Remove";
 
-    button.onclick = function () {
+    button.onclick = function (event) {
+      event.stopPropagation();
       const updatedLocations = locations.filter(
         place => place !== location
       );
