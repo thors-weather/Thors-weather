@@ -104,6 +104,17 @@ button {
     ⚡ Open Live Lightning Map
   </a>
   <p>Lightning alerts for your selected location: Coming soon.</p>
+<h3>📍 My Lightning Locations</h3>
+<p>Save cities or ZIP codes you want to monitor.</p>
+
+<input id="lightningLocation"
+       placeholder="Enter city or ZIP code">
+
+<button onclick="addLightningLocation()">
+  ➕ Save Location
+</button>
+
+<div id="savedLightningLocations"></div>
 </div>
 </main>
 
@@ -294,6 +305,47 @@ $("city").addEventListener("keydown", event => {
   }
 });
   
+function addLightningLocation() {
+  const input = document.getElementById("lightningLocation");
+  const location = input.value.trim();
+
+  if (!location) {
+    alert("Please enter a city or ZIP code.");
+    return;
+  }
+
+  const locations = JSON.parse(
+    localStorage.getItem("thorsLightningLocations") || "[]"
+  );
+
+  if (!locations.includes(location)) {
+    locations.push(location);
+    localStorage.setItem(
+      "thorsLightningLocations",
+      JSON.stringify(locations)
+    );
+  }
+
+  input.value = "";
+  showLightningLocations();
+}
+
+function showLightningLocations() {
+  const locations = JSON.parse(
+    localStorage.getItem("thorsLightningLocations") || "[]"
+  );
+
+  const container = document.getElementById("savedLightningLocations");
+  container.replaceChildren();
+
+  locations.forEach(location => {
+    const item = document.createElement("p");
+    item.textContent = "📍 " + location;
+    container.appendChild(item);
+  });
+}
+
+showLightningLocations();
 </script>
 
 <section style="padding:20px;text-align:center;background:#172b49;border-radius:12px;margin:20px;">
