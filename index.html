@@ -353,7 +353,7 @@ function addLightningLocation() {
     return;
   }
 
-  const locations = JSON.parse(
+  let locations = JSON.parse(
     localStorage.getItem("thorsLightningLocations") || "[]"
   );
 
@@ -367,41 +367,42 @@ function addLightningLocation() {
 
   input.value = "";
   showLightningLocations();
-  function showLightningLocations() {
+}
+
+function showLightningLocations() {
   const locations = JSON.parse(
     localStorage.getItem("thorsLightningLocations") || "[]"
   );
 
   const container = document.getElementById("savedLightningLocations");
-  container.replaceChildren();
+  container.innerHTML = "";
 
   locations.forEach(location => {
     const item = document.createElement("p");
-    item.textContent = "📍 " + location;
+    item.textContent = "📍 " + location + " ";
+
     const button = document.createElement("button");
-button.textContent = "❌ Remove";
+    button.textContent = "Remove";
 
-button.onclick = function() {
-  const saved = JSON.parse(
-    localStorage.getItem("thorsLightningLocations") || "[]"
-  );
-  const updated = saved.filter(place => place !== location);
-  localStorage.setItem(
-    "thorsLightningLocations",
-    JSON.stringify(updated)
-  );
-  showLightningLocations();
-};
+    button.onclick = function () {
+      const updatedLocations = locations.filter(
+        place => place !== location
+      );
 
-item.appendChild(button);
+      localStorage.setItem(
+        "thorsLightningLocations",
+        JSON.stringify(updatedLocations)
+      );
+
+      showLightningLocations();
+    };
+
+    item.appendChild(button);
     container.appendChild(item);
   });
-  }
 }
 
-
 showLightningLocations();
-
 
 document.getElementById("search").addEventListener("click", function () {
   const hammer = document.querySelector(".mjolnir-img");
