@@ -232,7 +232,7 @@ document.getElementById("weatherRadar").src = "https://www.rainviewer.com/map.ht
       temperature_unit: "fahrenheit",
       wind_speed_unit: "mph",
       timezone: "auto",
-      daily: "weather_code,temperature_2m_max,temperature_2m_min",
+      daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
       forecast_days: 5
     });
 
@@ -274,10 +274,11 @@ for (let i = 0; i < days.time.length; i++) {
 
   const high = Math.round(days.temperature_2m_max[i]);
   const low = Math.round(days.temperature_2m_min[i]);
-  const condition = descriptions[days.weather_code[i]] || "Weather";
+  const condition = descriptions[days.weather_code[i]] || "Weather"
+  const rain = days.precipitation_probability_max[i] ?? 0;
 
   const item = document.createElement("p");
-  item.textContent = `${day}: ${condition} | High ${high}°F | Low ${low}°F`;
+  item.textContent = `${day}: ${condition} | High ${high}°F | Low ${low}°F | Rain ${rain}%`;
   forecast.appendChild(item);
 }
     try {
