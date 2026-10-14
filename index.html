@@ -394,14 +394,18 @@ item.appendChild(button);
 
 showLightningLocations();
 
-  const mjolnir = document.querySelector(".mjolnir-img");
+  const searchButton = document.getElementById("search");
+const mjolnir = document.querySelector(".mjolnir-img");
 
-document.getElementById("search").addEventListener("click", function () {
-  mjolnir.classList.add("active");
+searchButton.addEventListener("click", function () {
+  mjolnir.style.transition = "transform 0.2s ease, filter 0.2s ease";
+  mjolnir.style.transform = "scale(1.5)";
+  mjolnir.style.filter = "drop-shadow(0 0 10px #00bfff) drop-shadow(0 0 20px #8fd3ff)";
 
   setTimeout(function () {
-    mjolnir.classList.remove("active");
-  }, 1000);
+    mjolnir.style.transform = "scale(1)";
+    mjolnir.style.filter = "";
+  }, 500);
 });
 </script>
 
