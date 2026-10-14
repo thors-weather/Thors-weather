@@ -393,6 +393,16 @@ item.appendChild(button);
 
 
 showLightningLocations();
+
+  const mjolnir = document.querySelector(".mjolnir-img");
+
+document.getElementById("search").addEventListener("click", function () {
+  mjolnir.classList.add("active");
+
+  setTimeout(function () {
+    mjolnir.classList.remove("active");
+  }, 1000);
+});
 </script>
 
 <section style="padding:20px;text-align:center;background:#172b49;border-radius:12px;margin:20px;">
