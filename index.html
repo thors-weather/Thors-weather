@@ -401,20 +401,25 @@ item.appendChild(button);
 
 
 showLightningLocations();
-
-  const searchButton = document.getElementById("search");
+const searchButton = document.getElementById("search");
 
 searchButton.addEventListener("click", function () {
-  const mjolnir = searchButton.querySelector(".mjolnir-img");
+  const mjolnir = document.querySelector(".mjolnir-img");
 
   if (mjolnir) {
-    mjolnir.classList.remove("active");
-    void mjolnir.offsetWidth;
-    mjolnir.classList.add("active");
-
-    setTimeout(function () {
-      mjolnir.classList.remove("active");
-    }, 2000);
+    mjolnir.animate(
+      [
+        { transform: "scale(1)", filter: "brightness(1)" },
+        { transform: "scale(2.8)", filter: "brightness(3)" },
+        { transform: "scale(1.8)", filter: "brightness(1.2)" },
+        { transform: "scale(3)", filter: "brightness(4)" },
+        { transform: "scale(1)", filter: "brightness(1)" }
+      ],
+      {
+        duration: 1800,
+        easing: "ease-in-out"
+      }
+    );
   }
 });
 
