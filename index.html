@@ -338,6 +338,22 @@ function addLightningLocation() {
   locations.forEach(location => {
     const item = document.createElement("p");
     item.textContent = "📍 " + location;
+    const button = document.createElement("button");
+button.textContent = "❌ Remove";
+
+button.onclick = function() {
+  const saved = JSON.parse(
+    localStorage.getItem("thorsLightningLocations") || "[]"
+  );
+  const updated = saved.filter(place => place !== location);
+  localStorage.setItem(
+    "thorsLightningLocations",
+    JSON.stringify(updated)
+  );
+  showLightningLocations();
+};
+
+item.appendChild(button);
     container.appendChild(item);
   });
   }
