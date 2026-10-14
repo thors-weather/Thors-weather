@@ -112,7 +112,7 @@ input {
 </header>
 
 <main>
-<div id="alertBanner" role="alert" style="display:none;background:#8b2029;color:white;padding:16px;border-radius:10px;margin:12px 0;font-weight:bold; "onclick="document.getElementById('alerts').scrollIntoView({behavior:'smooth'})">
+<div id="alertBanner" role="alert" style="display:none;background:#8b2029;color:white;padding:16px;border-radius:10px;margin:12px 0;font-weight:bold;cursor:pointer;" onclick="document.getElementById('alertDetails').open=true;document.getElementById('alertDetails').scrollIntoView({behavior:'smooth'});">
 </div>
   <div class="card search-card">
     <h2>Find Your Weather</h2>
@@ -134,7 +134,9 @@ input {
 </div>
   <div class="card">
     <h2>⚠️ Official Weather Alerts</h2>
+   <details id="alertDetails">
     <div id="alerts">Search for a location to check alerts.</div>
+   </details>
   </div>
 <div class="card">
  <details>
