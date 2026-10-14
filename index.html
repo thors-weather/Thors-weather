@@ -347,7 +347,7 @@ $("search").addEventListener("click", getWeather);
 $("city").addEventListener("keydown", event => {
   if (event.key === "Enter") {
     getWeather();
-    lightningMap.setView([place.latitude, place.longitude], 8);
+  lightningMap.invalidateSize(); lightningMap.setView([place.latitude, place.longitude], 8);
   }
 });
   
