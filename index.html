@@ -55,6 +55,14 @@ button {
   border: 0;
   font-weight: bold;
 }
+  .mjolnir {
+  display: inline-block;
+  font-size: 24px;
+  color: #d9e7f5;
+  text-shadow: 0 0 6px #8fd3ff;
+  transform: rotate(-15deg);
+  margin-right: 6px;
+  }
 input {
   background: rgba(255, 255, 255, 0.85);
 }
@@ -85,7 +93,7 @@ input {
   <div class="card search-card">
     <h2>Find Your Weather</h2>
     <input id="city" placeholder="Enter U.S. city or ZIP code">
-    <button id="search">Get My Weather</button>
+    <button id="search"><span class="mjolnir">◆</span> Get My Weather</button>
     <p id="status">Enter a location to begin.</p>
   </div>
 
