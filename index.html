@@ -72,7 +72,7 @@ button {
 </header>
 
 <main>
-
+<div id="alertBanner" role="alert" style="display:none;background:#8b2029;color:white;padding:16px;border-radius:10px;margin:12px 0;font-weight:bold;"></div>
   <div class="card">
     <h2>Find Your Weather</h2>
     <input id="city" placeholder="Enter U.S. city or ZIP code">
@@ -135,7 +135,7 @@ async function getWeather() {
 
   $("status").textContent = "Searching for your location...";
   $("alerts").textContent = "Checking official alerts...";
-
+$("alertBanner").style.display = "none";
   try {
     const geoResponse = await fetch(
       "https://geocoding-api.open-meteo.com/v1/search?name=" +
@@ -212,7 +212,7 @@ document.getElementById("weatherRadar").src = "https://www.rainviewer.com/map.ht
 
       const result = await response.json();
       const features = result.features || [];
-
+$("alertBanner").style.display = features.length ? "block" : "none"; $("alertBanner").textContent = features.length ? "⚠️ WEATHER ALERT: " + (features[0].properties.event || "Active weather alert") : "";
       $("alerts").replaceChildren();
 
       if (!features.length) {
