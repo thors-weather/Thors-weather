@@ -328,6 +328,7 @@ $("alertBanner").style.display = features.length ? "block" : "none"; $("alertBan
     }
 
     $("status").textContent = "Weather lookup complete.";
+    document.querySelector('a[href*="blitzortung.org"]').href = `https://maps.blitzortung.org/en/#6/${place.latitude}/${place.longitude}`;
 
   } catch (error) {
     $("status").textContent =
