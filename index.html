@@ -327,6 +327,7 @@ function addLightningLocation() {
   }
 
   input.value = "";
+  showLightningLocations();
   function showLightningLocations() {
   const locations = JSON.parse(
     localStorage.getItem("thorsLightningLocations") || "[]"
