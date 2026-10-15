@@ -274,7 +274,7 @@ async function checkNearbyLightning(lat, lon) {
     QUERY_LAYERS: "ldn_lightning_strike_density",
     STYLES: "",
     CRS: "CRS:84",
-    BBOX: `${lon - 0.15},${lat - 0.15},${lon + 0.15},${lat + 0.15}`,
+    BBOX: `${lon - 0.145 / Math.cos(lat * Math.PI / 180)},${lat - 0.145},${lon + 0.145 / Math.cos(lat * Math.PI / 180)},${lat + 0.145}`,
     WIDTH: "201",
     HEIGHT: "201",
     I: "100",
@@ -287,17 +287,44 @@ async function checkNearbyLightning(lat, lon) {
   );
 
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("NOAA request failed");
+   // Check the center and 8 surrounding points
+const samplePoints = [
+  [100, 100],
+  [50, 100],
+  [150, 100],
+  [100, 50],
+  [100, 150],
+  [65, 65],
+  [135, 65],
+  [65, 135],
+  [135, 135]
+];
 
-    const data = await response.json();
-    const density = Number(data.features?.[0]?.properties?.Band1);
+let lightningDetected = false;
 
-    if (Number.isFinite(density) && density > 0) {
-      warning.textContent =
-        "⚡ NOAA reports lightning activity near this location. Seek shelter if thunderstorms are nearby.";
-      warning.style.display = "block";
-    }
+for (const [i, j] of samplePoints) {
+  url.searchParams.set("I", i);
+  url.searchParams.set("J", j);
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error("NOAA request failed");
+  }
+
+  const data = await response.json();
+  const density = Number(data.features?.[0]?.properties?.Band1);
+
+  if (Number.isFinite(density) && density > 0) {
+    lightningDetected = true;
+    break;
+  }
+}
+
+if (lightningDetected) {
+  warning.textContent =
+    "⚡ NOAA reports lightning activity within approximately 10 miles of this location. Seek shelter if thunderstorms are nearby.";
+  warning.style.display = "block";
+}
   } catch (error) {
     console.warn("Lightning check unavailable:", error);
   }
