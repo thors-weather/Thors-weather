@@ -1045,25 +1045,3 @@ window.thorsSavedLocationsTimer = setInterval(
 </html>
 
 
-
-
-    if (Number.isFinite(density) && density > 0) {
-      return true;
-    }
-  }
-
-  return false;
-}
-// Check saved locations every 15 minutes
-showLightningLocations();
-monitorSavedLightningLocations();
-
-window.thorsSavedLocationsTimer = setInterval(
-  monitorSavedLightningLocations,
-  900000
-);
-</script>
-</body>
-</html>
-
-
