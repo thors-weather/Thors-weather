@@ -120,6 +120,26 @@ input {
   height: 100%;
   object-fit: contain;
 }
+ #lightningPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(340px, 90vw);
+  height: 100vh;
+  background: #ffffff;
+  color: #222222;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 9999;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.25);
+  transform: translateX(110%);
+  transition: transform 0.35s ease;
+}
+
+#lightningPanel.open {
+  transform: translateX(0);
+} 
 </style>
 </head>
 
@@ -180,7 +200,28 @@ input {
   ➕ Save Location
 </button>
 
-<div id="savedLightningLocations"></div>
+<button
+  type="button"
+  id="lightningPanelButton"
+  onclick="document.getElementById('lightningPanel').classList.toggle('open')"
+  style="padding:12px; background:#243b55; color:white; border:none; border-radius:8px; cursor:pointer;"
+>
+  ⚡ My Lightning Locations
+</button>
+
+<div id="lightningPanel">
+  <button
+    type="button"
+    onclick="document.getElementById('lightningPanel').classList.remove('open')"
+    style="float:right; padding:8px;"
+  >
+    ✕ Close
+  </button>
+
+  <h3>⚡ My Lightning Locations</h3>
+
+  <div id="savedLightningLocations"></div>
+</div>
   </div>
 
 </div><div id="lightning-warning" role="status" aria-live="polite" style="display:none; padding:15px; margin:10px; background:#7a3300; color:white; border-radius:10px;">
