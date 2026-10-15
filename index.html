@@ -467,17 +467,18 @@ function playThorLightning() {
   const container = document.getElementById("thorLightningAnimation");
   const video = document.getElementById("thorLightningVideo");
 
-  if (!container || !video) return;
+  if (!container || !video) {
+    alert("Thor animation elements not found.");
+    return;
+  }
 
   container.style.display = "block";
   video.currentTime = 0;
 
-  const playback = video.play();
-  if (playback) {
-    playback.catch(() => {
-      container.style.display = "none";
-    });
-  }
+  video.play().catch(error => {
+    alert("Thor video error: " + error.message);
+    container.style.display = "none";
+  });
 
   setTimeout(() => {
     video.pause();
