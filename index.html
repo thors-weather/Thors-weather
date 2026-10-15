@@ -255,7 +255,7 @@ $("alertBanner").style.display = "none";
       place.name + (place.admin1 ? ", " + place.admin1 : "");
        
     // Check NOAA lightning density near the selected location
-async function checkNearbyLightning(lat, lon) {
+window.checkNearbyLightning = async function(lat, lon) {
   
   const warning = document.getElementById("lightning-warning");
   if (!warning) return;
