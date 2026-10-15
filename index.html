@@ -402,7 +402,15 @@ for (let i = 0; i < days.time.length; i++) {
   const condition = descriptions[days.weather_code[i]] || "Weather"
   const rain = days.precipitation_probability_max[i] ?? 0;
 
-  const item = document.createElement("p");
+ const item = document.createElement("div");
+
+item.style.background = "#f0f4f8";
+item.style.color = "#222";
+item.style.border = "1px solid #b8c7d9";
+item.style.borderRadius = "10px";
+item.style.padding = "12px";
+item.style.marginBottom = "10px";
+item.style.display = "block";
   item.textContent = `${day}: ${condition} | High ${high}°F | Low ${low}°F | Rain ${rain}%`;
   forecast.appendChild(item);
 }
