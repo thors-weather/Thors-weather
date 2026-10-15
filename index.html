@@ -832,7 +832,21 @@ if (/^\d{5}$/.test(location)) {
     }
   }
 
-  status.textContent = results.join(" | ");
+  results.forEach(result => {
+  const location = result.match(/^\S+\s+([^:]+):/)?.[1];
+
+  if (!location) return;
+
+  const lightningStatus = document.getElementById(
+    "lightning-status-" + location
+  );
+
+  if (lightningStatus) {
+    lightningStatus.textContent = result;
+  }
+});
+
+status.textContent = "";
 }
 // Check NOAA lightning for a saved location
 async function checkSavedLocationLightning(lat, lon) {
