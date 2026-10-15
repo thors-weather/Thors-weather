@@ -337,6 +337,20 @@ if (thorThunderstormWarning && !sessionStorage.getItem("thorWarningPlayed")) {
   sessionStorage.setItem("thorWarningPlayed", "true");
   playThorLightning();
 }
+  // HUGINN AND MUNINN — SEVERE THUNDERSTORM WATCH
+const ravenThunderstormWatch = features.some(feature =>
+  (feature.properties?.event || "").toLowerCase() ===
+  "severe thunderstorm watch"
+);
+
+if (
+  ravenThunderstormWatch &&
+  !thorThunderstormWarning &&
+  !sessionStorage.getItem("ravensWatchPlayed")
+) {
+  sessionStorage.setItem("ravensWatchPlayed", "true");
+  playRavenAnimation();
+}
 $("alertBanner").style.display = features.length ? "block" : "none"; $("alertBanner").textContent = features.length ? "⚠️ WEATHER ALERT: " + (features[0].properties.event || "Active weather alert") : "";
       $("alerts").replaceChildren();
 
