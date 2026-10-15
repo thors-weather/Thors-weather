@@ -368,6 +368,11 @@ if (lightningDetected) {
   warning.textContent =
     "⚡ NOAA reports lightning activity within approximately 10 miles of this location. Seek shelter if thunderstorms are nearby.";
   warning.style.display = "block";
+
+  // Play Thor's existing thunderstorm animation
+  if (typeof playThorLightning === "function") {
+    playThorLightning();
+  }
 }
   } catch (error) {
     console.warn("Lightning check unavailable:", error);
