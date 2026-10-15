@@ -888,6 +888,24 @@ if (/^\d{5}$/.test(location)) {
 });
 
 status.textContent = "";
+  // Update the Lightning Locations button
+const panelButton = document.getElementById(
+  "lightningPanelButton"
+);
+
+if (panelButton) {
+  const lightningAlert = results.some(result =>
+    result.includes("Possible lightning activity detected")
+  );
+
+  if (lightningAlert) {
+    panelButton.style.background = "#b91c1c";
+    panelButton.textContent = "⚡ Lightning Alert!";
+  } else {
+    panelButton.style.background = "#243b55";
+    panelButton.textContent = "⚡ My Lightning Locations";
+  }
+}
 }
 // Check NOAA lightning for a saved location
 async function checkSavedLocationLightning(lat, lon) {
