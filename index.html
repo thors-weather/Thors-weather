@@ -569,6 +569,15 @@ item.style.display = "block";
     };
 
     item.appendChild(button);
+    const lightningStatus = document.createElement("div");
+
+lightningStatus.id = "lightning-status-" + location;
+lightningStatus.textContent = "⚡ Waiting for lightning check...";
+lightningStatus.style.marginTop = "8px";
+lightningStatus.style.fontSize = "14px";
+lightningStatus.style.padding = "6px 0";
+
+item.appendChild(lightningStatus);
     container.appendChild(item);
   });
 }
