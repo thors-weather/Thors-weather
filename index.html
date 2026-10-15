@@ -701,6 +701,27 @@ function closeRavenAnimation() {
 
 document.getElementById("ravenVideo").onended =
   closeRavenAnimation;
+  // Thor's Weather - Automatic saved-location monitoring
+async function monitorSavedLightningLocations() {
+  const locations = JSON.parse(
+    localStorage.getItem("thorsLightningLocations") || "[]"
+  );
+
+  if (locations.length === 0) return;
+
+  console.log(
+    "Thor's Weather: Saved locations to monitor:",
+    locations
+  );
+}
+
+// Check saved locations every 15 minutes
+monitorSavedLightningLocations();
+
+window.thorsSavedLocationsTimer = setInterval(
+  monitorSavedLightningLocations,
+  900000
+);
 </script>
 </body>
 </html>
