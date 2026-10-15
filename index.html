@@ -851,7 +851,14 @@ if (/^\d{5}$/.test(location)) {
         results.push("📍 " + location + ": Location not found");
         continue;
       }
+const currentStatus = document.getElementById(
+  "lightning-status-" + location
+);
 
+if (currentStatus) {
+  currentStatus.textContent =
+    "🔄 Checking lightning data for " + location + "...";
+}
       const detected = await checkSavedLocationLightning(
         place.latitude,
         place.longitude
