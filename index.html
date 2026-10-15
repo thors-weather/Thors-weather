@@ -792,9 +792,11 @@ async function monitorSavedLightningLocations() {
     container.after(status);
   }
 
-  status.textContent =
-    "⚡ Checking " + locations.length +
-    " saved lightning location(s)...";
+ status.textContent =
+  "⚡ Lightning monitor started — checking " +
+  locations.length + " location(s)...";
+
+console.log("Thor's Weather lightning monitor started");
 
   if (locations.length === 0) {
     status.textContent =
