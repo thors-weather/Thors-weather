@@ -723,6 +723,18 @@ function playThorLightning() {
     container.style.display = "none";
   };
 }
+  // Close Thor's animation when someone clicks or taps it
+document.getElementById("thorLightningAnimation")
+  ?.addEventListener("click", function() {
+    const video = document.getElementById("thorLightningVideo");
+
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+
+    this.style.display = "none";
+  });
 </script>
 
 }
