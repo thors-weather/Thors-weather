@@ -702,34 +702,11 @@ function closeRavenAnimation() {
 document.getElementById("ravenVideo").onended =
   closeRavenAnimation;
   // Thor's Weather - Automatic saved-location monitoring
- async function monitorSavedLightningLocations() {
-  const locations = JSON.parse(
-    localStorage.getItem("thorsLightningLocations") || "[]"
-  );
-
-  console.log(
-    "Thor's Weather: Saved locations to monitor:",
-    locations
-  );
-
-  let status = document.getElementById("lightningMonitorStatus");
-
-  if (!status) {
-    status = document.createElement("p");
-    status.id = "lightningMonitorStatus";
-
-    const container = document.getElementById(
-      "savedLightningLocations"
-    );
-
-    if (!container) return;
-
-    container.after(status);
-  }
-
-  status.textContent =
+   status.textContent =
     "⚡ Thor has " +
     locations.length +
+    " saved location(s) ready for monitoring.";
+}
     " saved location(s) ready for monitoring.";
 }
 // Check NOAA lightning for a saved location
