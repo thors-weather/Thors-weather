@@ -480,10 +480,30 @@ function playThorLightning() {
     container.style.display = "none";
   });
 
+  <script>
+function playThorLightning() {
+  const container = document.getElementById("thorLightningAnimation");
+  const video = document.getElementById("thorLightningVideo");
+
+  if (!container || !video) {
+    alert("Thor animation elements not found.");
+    return;
+  }
+
+  container.style.display = "block";
+  video.currentTime = 0;
+
+  video.play().catch(error => {
+    alert("Thor video error: " + error.message);
+    container.style.display = "none";
+  });
+
   setTimeout(() => {
     video.pause();
     container.style.display = "none";
   }, 5000);
+}
+</script>
 }
 </script>
   <button onclick="playThorLightning()"
