@@ -364,15 +364,23 @@ for (const [i, j] of samplePoints) {
   }
 }
 
+// Play Thor once when lightning is detected
 if (lightningDetected) {
   warning.textContent =
-    "⚡ NOAA reports lightning activity within approximately 10 miles of this location. Seek shelter if thunderstorms are nearby.";
+    "⚡ NOAA reports lightning activity near this location. Seek shelter if thunderstorms are nearby.";
   warning.style.display = "block";
 
-  // Play Thor's existing thunderstorm animation
-  if (typeof playThorLightning === "function") {
-    playThorLightning();
+  if (!window.thorStormAnimationPlayed) {
+    window.thorStormAnimationPlayed = true;
+
+    if (typeof playThorLightning === "function") {
+      playThorLightning();
+    }
   }
+} else {
+  // Reset Thor when no lightning is detected
+  window.thorStormAnimationPlayed = false;
+}
 }
   } catch (error) {
     console.warn("Lightning check unavailable:", error);
