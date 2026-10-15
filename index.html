@@ -232,7 +232,7 @@ $("alertBanner").style.display = "none";
   try {
     const geoResponse = await fetch(
       "https://geocoding-api.open-meteo.com/v1/search?name=" +
-      encodeURIComponent(city) +
+     encodeURIComponent
       "&count=10&language=en&format=json"
     );
 
