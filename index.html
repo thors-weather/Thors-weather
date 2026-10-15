@@ -702,12 +702,86 @@ function closeRavenAnimation() {
 document.getElementById("ravenVideo").onended =
   closeRavenAnimation;
   // Thor's Weather - Automatic saved-location monitoring
-   status.textContent =
-    "⚡ Thor has " +
-    locations.length +
-    " saved location(s) ready for monitoring.";
-}
-    " saved location(s) ready for monitoring.";
+async function monitorSavedLightningLocations() {
+  const locations = JSON.parse(
+    localStorage.getItem("thorsLightningLocations") || "[]"
+  );
+
+  let status = document.getElementById(
+    "lightningMonitorStatus"
+  );
+
+  if (!status) {
+    status = document.createElement("div");
+    status.id = "lightningMonitorStatus";
+
+    const container = document.getElementById(
+      "savedLightningLocations"
+    );
+
+    if (!container) return;
+    container.after(status);
+  }
+
+  status.textContent =
+    "⚡ Checking " + locations.length +
+    " saved lightning location(s)...";
+
+  if (locations.length === 0) {
+    status.textContent =
+      "⚡ No saved lightning locations.";
+    return;
+  }
+
+  const results = [];
+
+  for (const location of locations) {
+    try {
+      const response = await fetch(
+        "https://geocoding-api.open-meteo.com/v1/search?name=" +
+        encodeURIComponent(location) +
+        "&count=10&language=en&format=json"
+      );
+
+      if (!response.ok) {
+        throw new Error("Location lookup failed");
+      }
+
+      const data = await response.json();
+      const place = (data.results || []).find(
+        p => p.country_code === "US"
+      );
+
+      if (!place) {
+        results.push("📍 " + location + ": Location not found");
+        continue;
+      }
+
+      const detected = await checkSavedLocationLightning(
+        place.latitude,
+        place.longitude
+      );
+
+      results.push(
+        (detected ? "⚡ " : "📍 ") +
+        location +
+        (detected
+          ? ": Possible lightning activity detected"
+          : ": No lightning detected in sampled data")
+      );
+    } catch (error) {
+      console.warn(
+        "Saved lightning check failed:",
+        location,
+        error
+      );
+      results.push(
+        "⚠️ " + location + ": Lightning check unavailable"
+      );
+    }
+  }
+
+  status.textContent = results.join(" | ");
 }
 // Check NOAA lightning for a saved location
 async function checkSavedLocationLightning(lat, lon) {
