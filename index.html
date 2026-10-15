@@ -774,6 +774,18 @@ function playRavenAnimation() {
     closeRavenAnimation();
   });
 }
+  // Tap or click to close Huginn and Muninn
+document.getElementById("ravenAnimation")
+  ?.addEventListener("click", function() {
+    const video = document.getElementById("ravenVideo");
+
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+
+    this.style.display = "none";
+  });
 
 function closeRavenAnimation() {
   const overlay = document.getElementById("ravenAnimation");
