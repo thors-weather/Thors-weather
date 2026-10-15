@@ -353,6 +353,9 @@ for (const [i, j] of samplePoints) {
   }
 
   const data = await response.json();
+  if (!Array.isArray(data.features) || data.features.length === 0) {
+  throw new Error("NOAA returned no lightning density features");
+}
   const density = Number(data.features?.[0]?.properties?.Band1);
 
   if (Number.isFinite(density) && density > 0) {
