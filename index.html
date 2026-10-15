@@ -252,6 +252,14 @@ $("alertBanner").style.display = "none";
 
     $("location").textContent =
       place.name + (place.admin1 ? ", " + place.admin1 : "");
+    // Center NOAA lightning map on the selected location
+if (typeof lightningMap !== "undefined" && lightningMap) {
+  lightningMap.setView(
+    [place.latitude, place.longitude],
+    7
+  );
+  lightningMap.invalidateSize();
+}
 document.getElementById("weatherRadar").src = "https://www.rainviewer.com/map.html?loc=" + place.latitude + "," + place.longitude + ",7&oFa=0&oC=1&oU=0&oCS=1&oF=0&oAP=1&c=3&o=83";
     const params = new URLSearchParams({
       latitude: place.latitude,
