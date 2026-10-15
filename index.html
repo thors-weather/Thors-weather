@@ -328,6 +328,15 @@ for (let i = 0; i < days.time.length; i++) {
 
       const result = await response.json();
       const features = result.features || [];
+      // THOR'S WEATHER — THUNDERSTORM WARNING ANIMATION
+const thorThunderstormWarning = features.some(feature =>
+  (feature.properties?.event || "").toLowerCase().includes("thunderstorm warning")
+);
+
+if (thorThunderstormWarning && !sessionStorage.getItem("thorWarningPlayed")) {
+  sessionStorage.setItem("thorWarningPlayed", "true");
+  playThorLightning();
+}
 $("alertBanner").style.display = features.length ? "block" : "none"; $("alertBanner").textContent = features.length ? "⚠️ WEATHER ALERT: " + (features[0].properties.event || "Active weather alert") : "";
       $("alerts").replaceChildren();
 
