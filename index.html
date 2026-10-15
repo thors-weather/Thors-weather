@@ -492,8 +492,25 @@ document.getElementById("search").addEventListener("click", function () {
 </section>
   <script>lightningMap=L.map('lightningMap').setView([39.5,-98.35],4);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(lightningMap);</script>
   <script>
-L.tileLayer.wms(
+  <script>
+const noaaLightningLayer = L.tileLayer.wms(
   "https://nowcoast.noaa.gov/geoserver/observations/lightning_detection/ows",
+  {
+    layers: "ldn_lightning_strike_density",
+    format: "image/png",
+    transparent: true,
+    version: "1.3.0",
+    attribution: "Lightning data: NOAA nowCOAST"
+  }
+).addTo(lightningMap);
+
+// Refresh NOAA lightning data every 15 minutes
+setInterval(function() {
+  noaaLightningLayer.setParams({
+    refresh: Date.now()
+  });
+}, 900000);
+</script>
   {
     layers: "ldn_lightning_strike_density",
     format: "image/png",
