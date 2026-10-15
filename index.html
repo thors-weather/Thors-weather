@@ -253,6 +253,55 @@ $("alertBanner").style.display = "none";
 
     $("location").textContent =
       place.name + (place.admin1 ? ", " + place.admin1 : "");
+       
+    // Check NOAA lightning density near the selected location
+async function checkNearbyLightning(lat, lon) {
+  
+  const warning = document.getElementById("lightning-warning");
+  if (!warning) return;
+
+  warning.style.display = "none";
+
+  const url = new URL(
+    "https://nowcoast.noaa.gov/geoserver/observations/lightning_detection/ows"
+  );
+
+  const options = {
+    SERVICE: "WMS",
+    VERSION: "1.3.0",
+    REQUEST: "GetFeatureInfo",
+    LAYERS: "ldn_lightning_strike_density",
+    QUERY_LAYERS: "ldn_lightning_strike_density",
+    STYLES: "",
+    CRS: "CRS:84",
+    BBOX: `${lon - 0.15},${lat - 0.15},${lon + 0.15},${lat + 0.15}`,
+    WIDTH: "201",
+    HEIGHT: "201",
+    I: "100",
+    J: "100",
+    INFO_FORMAT: "application/json"
+  };
+
+  Object.entries(options).forEach(([key, value]) =>
+    url.searchParams.set(key, value)
+  );
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("NOAA request failed");
+
+    const data = await response.json();
+    const density = Number(data.features?.[0]?.properties?.Band1);
+
+    if (Number.isFinite(density) && density > 0) {
+      warning.textContent =
+        "⚡ NOAA reports lightning activity near this location. Seek shelter if thunderstorms are nearby.";
+      warning.style.display = "block";
+    }
+  } catch (error) {
+    console.warn("Lightning check unavailable:", error);
+  }
+}
     // Center NOAA lightning map on the selected location
 if (typeof lightningMap !== "undefined" && lightningMap) {
   lightningMap.setView(
@@ -261,6 +310,8 @@ if (typeof lightningMap !== "undefined" && lightningMap) {
   );
   lightningMap.invalidateSize();
 }
+// Check NOAA lightning near the selected location
+checkNearbyLightning(place.latitude, place.longitude);    
 document.getElementById("weatherRadar").src = "https://www.rainviewer.com/map.html?loc=" + place.latitude + "," + place.longitude + ",7&oFa=0&oC=1&oU=0&oCS=1&oF=0&oAP=1&c=3&o=83";
     const params = new URLSearchParams({
       latitude: place.latitude,
