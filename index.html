@@ -144,6 +144,34 @@ input {
 </head>
 
 <body>
+  <!-- ODIN THE ALL-FATHER WARNING OVERLAY -->
+<div id="odinWarningOverlay"
+     style="display:none;position:fixed;inset:0;background:#050a19;z-index:100001;flex-direction:column;align-items:center;justify-content:center;padding:15px;box-sizing:border-box;">
+
+  <h2 style="color:gold;text-align:center;">
+    ⚠️ ODIN THE ALL-FATHER ⚠️
+  </h2>
+
+  <video id="odinWarningVideo"
+         src="odin-warning.mp4"
+         playsinline
+         preload="none"
+         controls
+         style="width:100%;max-width:650px;max-height:65vh;object-fit:contain;">
+  </video>
+
+  <p style="color:white;text-align:center;">
+    Heed my warning. Danger approaches.
+    Seek shelter and protect those you love.
+  </p>
+
+  <button onclick="document.getElementById('odinWarningVideo').pause();document.getElementById('odinWarningOverlay').style.display='none';"
+          style="background:#7a2020;color:white;padding:14px 25px;border:2px solid gold;border-radius:10px;cursor:pointer;">
+    Close Warning
+  </button>
+
+</div>
+<!-- END ODIN WARNING OVERLAY -->
 
 <header>
   <h1>⚡ Thor's Weather ⚡</h1>
