@@ -510,6 +510,37 @@ if (
   sessionStorage.setItem("ravensWatchPlayed", "true");
   playRavenAnimation();
 }
+ 
+// ODIN THE ALL-FATHER: TORNADO AND HURRICANE WARNINGS
+
+const odinWarnings = features.filter(feature => {
+  const event = (feature.properties?.event || "").toLowerCase();
+
+  return event === "tornado warning" ||
+         event === "hurricane warning";
+});
+
+if (odinWarnings.length > 0) {
+  const warningIds = odinWarnings
+    .map(feature => feature.properties?.id || feature.id)
+    .filter(Boolean)
+    .sort();
+
+  const warningKey = warningIds.length
+    ? warningIds.join("|")
+    : odinWarnings.map(feature =>
+        feature.properties?.event || "Warning"
+      ).sort().join("|");
+
+  if (sessionStorage.getItem("odinWarningPlayed") !== warningKey) {
+    sessionStorage.setItem("odinWarningPlayed", warningKey);
+
+    if (typeof playOdinWarning === "function") {
+      playOdinWarning();
+    }
+  }
+}
+     
 $("alertBanner").style.display = features.length ? "block" : "none"; $("alertBanner").textContent = features.length ? "⚠️ WEATHER ALERT: " + (features[0].properties.event || "Active weather alert") : "";
       $("alerts").replaceChildren();
 
@@ -1043,6 +1074,28 @@ window.thorsSavedLocationsTimer = setInterval(
   900000
 );
 </script>
+  <!-- ODIN THE ALL-FATHER ANIMATION CONTROL -->
+<script>
+function playOdinWarning() {
+  const overlay = document.getElementById("odinWarningOverlay");
+  const video = document.getElementById("odinWarningVideo");
+
+  if (!overlay || !video) return;
+
+  overlay.style.display = "flex";
+
+  video.currentTime = 0;
+
+  const playPromise = video.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch(error => {
+      console.warn("Odin video playback unavailable:", error);
+    });
+  }
+}
+</script>
+<!-- END ODIN ANIMATION CONTROL -->
 </body>
 </html>
 
