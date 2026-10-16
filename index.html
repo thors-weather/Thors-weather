@@ -477,7 +477,20 @@ document.getElementById("weatherRadar").src = "https://www.rainviewer.com/map.ht
 
     const data = await weatherResponse.json();
     const c = data.current;
+// FREYR AUTOMATIC RAIN DETECTION
+const freyrRainCodes = [
+  51, 53, 55, 56, 57,
+  61, 63, 65, 66, 67,
+  80, 81, 82
+];
 
+if (
+  freyrRainCodes.includes(Number(c.weather_code)) &&
+  typeof playFreyrRain === "function"
+) {
+  playFreyrRain();
+}
+// END FREYR AUTOMATIC RAIN DETECTION
     $("temperature").textContent =
       Math.round(c.temperature_2m) + "°F";
 
