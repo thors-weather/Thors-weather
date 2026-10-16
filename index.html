@@ -145,6 +145,20 @@ input {
 
 <body>
   <!-- ODIN THE ALL-FATHER WARNING OVERLAY -->
+  <!-- FREYR RAIN ANIMATION -->
+<div id="freyrRainOverlay"
+     onclick="closeFreyrRain()"
+     style="display:none;position:fixed;inset:0;background:#050a19;z-index:100002;cursor:pointer;">
+
+  <video id="freyrRainVideo"
+         src="freyr-rain.mp4"
+         playsinline
+         preload="auto"
+         style="width:100%;height:100%;object-fit:cover;">
+  </video>
+
+</div>
+<!-- END FREYR RAIN ANIMATION -->
 <div id="odinWarningOverlay"
      onclick="closeOdinWarning()"
      style="display:none;position:fixed;inset:0;background:#050a19;z-index:100001;cursor:pointer;">
@@ -803,6 +817,11 @@ style="position:fixed;bottom:20px;right:20px;z-index:100000;pointer-events:auto;
   style="position:fixed;bottom:145px;right:20px;z-index:100000;background:#46334f;color:white;padding:15px;border:2px solid gold;border-radius:10px;cursor:pointer;">
   🛡️ Test Odin Animation
 </button>
+  <!-- FREYR TEST ANIMATION BUTTON -->
+<button onclick="playFreyrRain()"
+  style="position:fixed;bottom:205px;right:20px;z-index:100000;background:#245c46;color:white;padding:15px;border:2px solid gold;border-radius:10px;cursor:pointer;">
+  🌧️ Test Freyr Animation
+</button>
   <!-- HUGINN AND MUNINN RAVEN ANIMATION -->
 <div id="ravenAnimation"
      style="display:none; position:fixed; inset:0;
@@ -1128,6 +1147,38 @@ function playOdinWarning() {
 }
 </script>
 <!-- END ODIN ANIMATION CONTROL -->
+  <!-- FREYR RAIN ANIMATION CONTROL -->
+<script>
+function playFreyrRain() {
+  const overlay = document.getElementById("freyrRainOverlay");
+  const video = document.getElementById("freyrRainVideo");
+
+  if (!overlay || !video) return;
+
+  overlay.style.display = "block";
+  video.currentTime = 0;
+
+  video.play().catch(error => {
+    console.warn("Freyr video playback unavailable:", error);
+    closeFreyrRain();
+  });
+}
+
+function closeFreyrRain() {
+  const overlay = document.getElementById("freyrRainOverlay");
+  const video = document.getElementById("freyrRainVideo");
+
+  if (video) {
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  if (overlay) {
+    overlay.style.display = "none";
+  }
+}
+</script>
+<!-- END FREYR RAIN ANIMATION CONTROL -->
 </body>
 </html>
 
