@@ -1296,6 +1296,10 @@ function closeNjordWind() {
 
   if (overlay) overlay.style.display = "none";
 }
+  // Automatically close Njord when his video finishes
+document.getElementById("njordWindVideo").addEventListener("ended", function() {
+  closeNjordWind();
+});
 </script>
 <!-- END NJORD WIND ANIMATION CONTROL -->
 </body>
