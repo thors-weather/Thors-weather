@@ -490,6 +490,17 @@ if (
   playFreyrRain();
 }
 // END FREYR AUTOMATIC RAIN DETECTION
+    // NJORD AUTOMATIC WIND DETECTION
+const njordWindSpeed = Number(c.wind_speed_10m);
+
+if (
+  Number.isFinite(njordWindSpeed) &&
+  njordWindSpeed >= 25 &&
+  typeof playNjordWind === "function"
+) {
+  playNjordWind();
+}
+// END NJORD AUTOMATIC WIND DETECTION
     $("temperature").textContent =
       Math.round(c.temperature_2m) + "°F";
 
