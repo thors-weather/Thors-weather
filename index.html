@@ -823,6 +823,11 @@ style="position:fixed;bottom:20px;right:20px;z-index:100000;pointer-events:auto;
   🌧️ Test Freyr Animation
   
 </button>
+  <!-- SKADI TEST ANIMATION BUTTON -->
+<button onclick="playSkadiWinter()"
+  style="position:fixed;bottom:265px;right:20px;z-index:100000;background:#345b78;color:white;padding:15px;border:2px solid silver;border-radius:10px;cursor:pointer;">
+  ❄️ Test Skadi Animation
+</button>
   <!-- HUGINN AND MUNINN RAVEN ANIMATION -->
 <div id="ravenAnimation"
      style="display:none; position:fixed; inset:0;
@@ -1180,6 +1185,38 @@ function closeFreyrRain() {
 }
 </script>
 <!-- END FREYR RAIN ANIMATION CONTROL -->
+ <!-- SKADI WINTER ANIMATION CONTROL -->
+<script>
+function playSkadiWinter() {
+  const overlay = document.getElementById("skadiWinterOverlay");
+  const video = document.getElementById("skadiWinterVideo");
+
+  if (!overlay || !video) return;
+
+  overlay.style.display = "block";
+  video.currentTime = 0;
+
+  video.play().catch(error => {
+    console.warn("Skadi video playback unavailable:", error);
+    closeSkadiWinter();
+  });
+}
+
+function closeSkadiWinter() {
+  const overlay = document.getElementById("skadiWinterOverlay");
+  const video = document.getElementById("skadiWinterVideo");
+
+  if (video) {
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  if (overlay) {
+    overlay.style.display = "none";
+  }
+}
+</script>
+<!-- END SKADI WINTER ANIMATION CONTROL -->
 </body>
 </html>
 
