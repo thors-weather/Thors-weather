@@ -146,28 +146,15 @@ input {
 <body>
   <!-- ODIN THE ALL-FATHER WARNING OVERLAY -->
 <div id="odinWarningOverlay"
-     style="display:none;position:fixed;inset:0;background:#050a19;z-index:100001;flex-direction:column;align-items:center;justify-content:center;padding:0;box-sizing:border-box;overflow:hidden;"
-  <h2 style="color:gold;text-align:center;">
-    ⚠️ ODIN THE ALL-FATHER ⚠️
-  </h2>
+     onclick="closeOdinWarning()"
+     style="display:none;position:fixed;inset:0;background:#050a19;z-index:100001;cursor:pointer;">
 
   <video id="odinWarningVideo"
          src="odin-warning.mp4"
          playsinline
-         preload="none"
-         controls
-        style="width:100%;height:100%;object-fit:contain;">
+         preload="auto"
+         style="width:100%;height:100%;object-fit:cover;">
   </video>
-
-  <p style="color:white;text-align:center;">
-    Heed my warning. Danger approaches.
-    Seek shelter and protect those you love.
-  </p>
-
-  <button onclick="document.getElementById('odinWarningVideo').pause();document.getElementById('odinWarningOverlay').style.display='none';"
-          style="background:#7a2020;color:white;padding:14px 25px;border:2px solid gold;border-radius:10px;cursor:pointer;">
-    Close Warning
-  </button>
 
 </div>
 <!-- END ODIN WARNING OVERLAY -->
@@ -1124,6 +1111,19 @@ function playOdinWarning() {
     playPromise.catch(error => {
       console.warn("Odin video playback unavailable:", error);
     });
+  }
+}
+  function closeOdinWarning() {
+  const overlay = document.getElementById("odinWarningOverlay");
+  const video = document.getElementById("odinWarningVideo");
+
+  if (video) {
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  if (overlay) {
+    overlay.style.display = "none";
   }
 }
 </script>
