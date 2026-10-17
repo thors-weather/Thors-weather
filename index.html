@@ -322,42 +322,46 @@ async function getWeather() {
   $("alerts").textContent = "Checking official alerts...";
 $("alertBanner").style.display = "none";
   try {
-    let place;
+     let place;
 
-if (/^\d{5}$/.test(city)) {
-  // Look up U.S. ZIP codes
-  const geoResponse = await fetch(
-    "https://api.zippopotam.us/us/" +
-    encodeURIComponent(city)
-  );
+    if (/^\d{5}$/.test(city)) {
+      // Look up U.S. ZIP codes
+      const geoResponse = await fetch(
+        "https://api.zippopotam.us/us/" +
+        encodeURIComponent(city)
+      );
 
-  if (!geoResponse.ok) {
-    throw new Error("ZIP code not found.");
-  }
+      if (!geoResponse.ok) {
+        throw new Error("ZIP code lookup failed.");
+      }
 
-  const geo = await geoResponse.json();
-  const zipPlace = geo.places?.[0];
+      const geo = await geoResponse.json();
+      const zipPlace = geo.places?.[0];
 
-  if (zipPlace) {
-    place = {
-      name: zipPlace["place name"],
-      admin1: zipPlace["state abbreviation"],
-      latitude: Number(zipPlace.latitude),
-      longitude: Number(zipPlace.longitude)
-    };
-  }
+      if (zipPlace) {
+        place = {
+          name: zipPlace["place name"],
+          admin1: zipPlace["state abbreviation"],
+          latitude: Number(zipPlace.latitude),
+          longitude: Number(zipPlace.longitude)
+        };
+      }
 
-} else {
-  // Look up city names
-  const geoResponse = await fetch(
-    "https://geocoding-api.open-meteo.com/v1/search?name=" +
-    encodeURIComponent(city) +
-    "&count=10&language=en&format=json"
-  );
+    } else {
+      // Look up city names
+      const geoResponse = await fetch(
+        "https://geocoding-api.open-meteo.com/v1/search?name=" +
+        encodeURIComponent(city) +
+        "&count=10&language=en&format=json"
+      );
 
-  if (!geoResponse.ok) {
-   
-}
+      if (!geoResponse.ok) {
+        throw new Error("Location search failed.");
+      }
+
+      const geo = await geoResponse.json();
+      place = (geo.results || [])[0];
+    }
 
     if (!place) {
       throw new Error("Location not found. Try another city or ZIP code.");
