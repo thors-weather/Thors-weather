@@ -1332,11 +1332,15 @@ function closeSkadiWinter() {
 }
 </script>
 <!-- END SKADI WINTER ANIMATION CONTROL -->
-  <!-- NJORD WIND ANIMATION CONTROL -->
-  // Automatically close Skadi when her video finishes
+
+<!-- AUTOMATICALLY CLOSE SKADI VIDEO -->
+<script>
 document.getElementById("skadiWinterVideo").addEventListener("ended", function() {
   closeSkadiWinter();
 });
+</script>
+
+<!-- NJORD WIND ANIMATION CONTROL -->
 <script>
 function playNjordWind() {
   const overlay = document.getElementById("njordWindOverlay");
