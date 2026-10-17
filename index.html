@@ -1178,11 +1178,16 @@ function playOdinWarning() {
 
   const playPromise = video.play();
 
-  if (playPromise !== undefined) {
+    if (playPromise !== undefined) {
     playPromise.catch(error => {
       console.warn("Odin video playback unavailable:", error);
+      closeOdinWarning();
     });
   }
+
+  video.onended = function() {
+    closeOdinWarning();
+  };
 }
   function closeOdinWarning() {
   const overlay = document.getElementById("odinWarningOverlay");
