@@ -563,7 +563,7 @@ item.style.display = "block";
 const thorThunderstormWarning = features.some(feature =>
   (feature.properties?.event || "").toLowerCase().includes("thunderstorm warning")
 );
-sessionStorage.getItem
+
   // HUGINN AND MUNINN — SEVERE THUNDERSTORM WATCH
 const ravenThunderstormWatch = features.some(feature =>
   (feature.properties?.event || "").toLowerCase() ===
@@ -1212,8 +1212,12 @@ function playFreyrRain() {
 
   video.play().catch(error => {
     console.warn("Freyr video playback unavailable:", error);
-    closeFreyrRain();
+     closeFreyrRain();
   });
+
+  video.onended = function() {
+    closeFreyrRain();
+  };
 }
 
 function closeFreyrRain() {
