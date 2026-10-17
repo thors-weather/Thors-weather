@@ -229,6 +229,14 @@ input {
   <button type="button" id="quickSaveLocation" style="flex-shrink:0; padding:10px 8px; border:none; border-left:1px solid #ccc; border-radius:0; background:#eaf4ff; color:#173451; font-size:12px; cursor:pointer;">⚡ Save</button>
 </div>
     <button id="search" style="display:block; width:280px; max-width:100%; margin:10px auto; box-sizing:border-box; padding:12px 8px;"><img src="a_clean_high_detail_fantasy_styled_icon_illustra.png" class="mjolnir-img" alt=""> Get My Weather</button>
+   <button
+  type="button"
+  id="lightningPanelButton"
+  onclick="document.getElementById('lightningPanel').classList.toggle('open')"
+  style="display:block; width:280px; max-width:100%; margin:10px auto; padding:12px; background:#243b55; color:white; border:none; border-radius:8px; cursor:pointer;"
+>
+  ⚡ My Lightning Locations
+</button>
     <p id="status">Enter a location to begin.</p>
   </div>
 
@@ -261,24 +269,10 @@ input {
   </a>
   <p>Lightning alerts for your selected location: Coming soon.</p>
 <div>
-  <h3 style="margin-top:20px;margin-bottom:10px;">📍 My Lightning Locations</h3>
-<p>Save cities or ZIP codes you want to monitor.</p>
+  <!-- Hidden input needed for the working quick-save button -->
+  <input id="lightningLocation" type="hidden">
 
-<input id="lightningLocation"
-       placeholder="Enter city or ZIP code">
 
-<button onclick="addLightningLocation()">
-  ➕ Save Location
-</button>
-
-<button
-  type="button"
-  id="lightningPanelButton"
-  onclick="document.getElementById('lightningPanel').classList.toggle('open')"
-  style="padding:12px; background:#243b55; color:white; border:none; border-radius:8px; cursor:pointer;"
->
-  ⚡ My Lightning Locations
-</button>
 
 <div id="lightningPanel">
   <button
