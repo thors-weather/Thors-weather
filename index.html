@@ -1328,24 +1328,10 @@ function playNjordWind() {
   });
 }
 
-function closeNjordWind() {
-  const overlay = document.getElementById("njordWindOverlay");
-  const video = document.getElementById("njordWindVideo");
-
-  if (video) {
-    video.pause();
-    video.currentTime = 0;
-  }
-
-  if (overlay) overlay.style.display = "none";
-}
   // Automatically close Njord when his video finishes
 document.getElementById("njordWindVideo").addEventListener("ended", function() {
   closeNjordWind();
 });
-</script>
-<!-- END NJORD WIND ANIMATION CONTROL -->
-</body>
 </html>
 
 
