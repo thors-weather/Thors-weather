@@ -333,12 +333,10 @@ $("alertBanner").style.display = "none";
 
     const geo = await geoResponse.json();
 
-    const place = (geo.results || []).find(
-      p => p.country_code === "US"
-    );
+   const place = (geo.results || [])[0];
 
     if (!place) {
-      throw new Error("U.S. location not found.");
+      throw new Error("Location not found. Try another city or ZIP code.");
     }
 
     $("location").textContent =
@@ -564,11 +562,7 @@ item.style.display = "block";
 const thorThunderstormWarning = features.some(feature =>
   (feature.properties?.event || "").toLowerCase().includes("thunderstorm warning")
 );
-
-if (thorThunderstormWarning && !sessionStorage.getItem("thorWarningPlayed")) {
-  sessionStorage.setItem("thorWarningPlayed", "true");
-  playThorLightning();
-}
+sessionStorage.getItem
   // HUGINN AND MUNINN — SEVERE THUNDERSTORM WATCH
 const ravenThunderstormWatch = features.some(feature =>
   (feature.properties?.event || "").toLowerCase() ===
