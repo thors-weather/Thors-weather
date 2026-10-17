@@ -1253,8 +1253,12 @@ function playSkadiWinter() {
 
   video.play().catch(error => {
     console.warn("Skadi video playback unavailable:", error);
-    closeSkadiWinter();
+      closeSkadiWinter();
   });
+
+  video.onended = function() {
+    closeSkadiWinter();
+  };
 }
 
 function closeSkadiWinter() {
