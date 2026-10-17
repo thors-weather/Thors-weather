@@ -206,7 +206,10 @@ input {
 </div>
   <div class="card search-card">
     <h2>Find Your Weather</h2>
-    <input id="city" placeholder="Enter U.S. city or ZIP code">
+    <div style="display:flex; align-items:center; width:240px; max-width:100%; margin:0 auto; border:1px solid #8fd3ff; border-radius:8px; overflow:hidden; background:white;">
+  <input id="city" placeholder="City or ZIP" style="width:100%; min-width:0; flex:1; border:none; padding:10px 8px; box-sizing:border-box;">
+  <button type="button" id="quickSaveLocation" style="flex-shrink:0; padding:10px 8px; border:none; border-left:1px solid #ccc; border-radius:0; background:#eaf4ff; color:#173451; font-size:12px; cursor:pointer;">⚡ Save</button>
+</div>
     <button id="search"><img src="a_clean_high_detail_fantasy_styled_icon_illustra.png" class="mjolnir-img" alt=""> Get My Weather</button>
     
     <p id="status">Enter a location to begin.</p>
@@ -711,6 +714,18 @@ function addLightningLocation() {
   input.value = "";
   showLightningLocations();
 }
+  document.getElementById("quickSaveLocation").addEventListener("click", function() {
+  const weatherInput = document.getElementById("city");
+  const lightningInput = document.getElementById("lightningLocation");
+
+  if (!weatherInput.value.trim()) {
+    alert("Please enter a city or ZIP code first.");
+    return;
+  }
+
+  lightningInput.value = weatherInput.value.trim();
+  addLightningLocation();
+});
 
 function showLightningLocations() {
   const locations = JSON.parse(
