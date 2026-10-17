@@ -358,12 +358,6 @@ if (/^\d{5}$/.test(city)) {
   if (!geoResponse.ok) {
    
 }
-      throw new Error("Location search failed.");
-    }
-
-    const geo = await geoResponse.json();
-
-   const place = (geo.results || [])[0];
 
     if (!place) {
       throw new Error("Location not found. Try another city or ZIP code.");
