@@ -1562,13 +1562,11 @@ function closeLightningFullscreen() {
 
   <p id="asgardBetaLoginMessage" aria-live="polite"></p>
 </section>
-  <p id="asgardLoginStatus" aria-live="polite">
-  🔒 Checking login status...
+<!-- ASGARD MEMBERSHIP STATUS DISPLAY -->
+<p id="asgardMembershipStatus" aria-live="polite">
+  ⚡ Checking Asgard membership...
 </p>
-  <!-- ASGARD LOGIN STATUS CHECK -->
-<script>
-async function checkAsgardLoginStatus() {
-  const status = document.getElementById("asgardLoginStatus");
+<!-- END ASGARD MEMBERSHIP STATUS DISPLAY -->
 
   if (!status) return;
 
@@ -1662,8 +1660,52 @@ asgardSupabase.auth.onAuthStateChange(() => {
 });
 </script>
 <!-- END ASGARD LOGIN STATUS CHECK -->
-<!-- END ASGARD BETA LOGIN CONTROL -->
+  
 
+<!-- ASGARD MEMBERSHIP ACCESS CHECK -->
+<script>
+async function checkAsgardMembership() {
+  const status = document.getElementById("asgardMembershipStatus");
+
+  if (!status) return;
+
+  status.textContent = "⚡ Checking Asgard membership...";
+
+  try {
+    const { data: userData, error: userError } =
+      await asgardSupabase.auth.getUser();
+
+    if (userError || !userData.user) {
+      status.textContent = "🔒 Sign in to check membership";
+      return;
+    }
+
+    const { data, error } =
+      await asgardSupabase.rpc("get_asgard_access");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      status.textContent = "🔒 No active beta membership";
+    } else if (data[0].member_role === "owner") {
+      status.textContent = "👑 Asgard Owner — Permanent Access";
+    } else {
+      status.textContent = "⚡ Asgard Beta Tester — Active";
+    }
+  } catch (error) {
+    console.error("Asgard membership check:", error);
+    status.textContent = "⚠️ Unable to verify membership";
+  }
+}
+
+checkAsgardMembership();
+
+asgardSupabase.auth.onAuthStateChange(() => {
+  setTimeout(checkAsgardMembership, 0);
+});
+</script>
+<!-- END ASGARD MEMBERSHIP ACCESS CHECK -->
+  <!-- END ASGARD BETA LOGIN CONTROL -->
 <!-- END SUPABASE CONNECTION -->
 
 </body>
