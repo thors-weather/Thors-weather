@@ -1568,29 +1568,9 @@ function closeLightningFullscreen() {
 </p>
 <!-- END ASGARD MEMBERSHIP STATUS DISPLAY -->
 
-  if (!status) return;
 
-  try {
-    const { data, error } = await asgardSupabase.auth.getUser();
 
-    if (error || !data.user) {
-      status.textContent = "🔒 Not Signed In";
-    } else {
-      status.textContent = "🔓 Signed In";
-    }
-  } catch (error) {
-    status.textContent = "⚠️ Unable to verify login";
-  }
-}
-
-checkAsgardLoginStatus();
-
-asgardSupabase.auth.onAuthStateChange(() => {
-  setTimeout(checkAsgardLoginStatus, 0);
-});
-</script>
-<!-- END ASGARD LOGIN STATUS CHECK -->
-<!-- END ASGARD BETA LOGIN -->
+ 
 
 <!-- SUPABASE CONNECTION - WEATHER WIELDERS OF ASGARD -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
