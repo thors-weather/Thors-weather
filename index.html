@@ -857,10 +857,18 @@ document.getElementById("search").addEventListener("click", function () {
 });
 </script>
 
-<section style="padding:20px;text-align:center;background:#172b49;border-radius:12px;margin:20px;">
+<section style="padding:12px;text-align:center;background:rgba(10,20,35,0.35);border:1px solid rgba(143,211,255,0.45);border-radius:12px;margin:20px auto;max-width:1000px;box-sizing:border-box;">
   <h2>⚡ Live U.S. Weather Radar</h2>
   <a href="https://radar.weather.gov/" target="_blank" rel="noopener noreferrer" style="color:white;background:#2676d9;padding:14px;border-radius:8px;display:inline-block;">Open Live Radar Map</a>
-<iframe id="weatherRadar" src="https://www.rainviewer.com/map.html?loc=35,-100,5&oFa=0&oC=1&oU=0&oCS=1&oF=0&oAP=1&c=3&o=83" width="100%" height="400" style="border:0;border-radius:12px;margin-top:15px;" title="Live Weather Radar" loading="lazy"></iframe>
+<iframe
+  id="weatherRadar"
+  src="https://www.rainviewer.com/map.html?loc=35,-100,5&oFa=0&oC=1&oU=0&oCS=1&oF=0&oAP=1&c=3&o=83"
+  width="100%"
+  height="420"
+  style="display:block;box-sizing:border-box;border:2px solid rgba(143,211,255,0.65);border-radius:12px;margin-top:15px;"
+  title="Live U.S. Weather Radar"
+  loading="lazy">
+</iframe>
 </section>
   <script>lightningMap=L.map('lightningMap').setView([39.5,-98.35],4);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(lightningMap);</script>
   <script>
