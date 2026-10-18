@@ -303,8 +303,7 @@ input {
   <input id="lightningLocation" type="hidden">
 
 
-
-<div id="lightningPanel">
+<div id="lightningPanel" onclick="if(event.target === this) this.classList.remove('open')">
   <button
     type="button"
     onclick="document.getElementById('lightningPanel').classList.remove('open')"
