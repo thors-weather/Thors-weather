@@ -1562,6 +1562,36 @@ function closeLightningFullscreen() {
 
   <p id="asgardBetaLoginMessage" aria-live="polite"></p>
 </section>
+  <p id="asgardLoginStatus" aria-live="polite">
+  🔒 Checking login status...
+</p>
+  <!-- ASGARD LOGIN STATUS CHECK -->
+<script>
+async function checkAsgardLoginStatus() {
+  const status = document.getElementById("asgardLoginStatus");
+
+  if (!status) return;
+
+  try {
+    const { data, error } = await asgardSupabase.auth.getUser();
+
+    if (error || !data.user) {
+      status.textContent = "🔒 Not Signed In";
+    } else {
+      status.textContent = "🔓 Signed In";
+    }
+  } catch (error) {
+    status.textContent = "⚠️ Unable to verify login";
+  }
+}
+
+checkAsgardLoginStatus();
+
+asgardSupabase.auth.onAuthStateChange(() => {
+  setTimeout(checkAsgardLoginStatus, 0);
+});
+</script>
+<!-- END ASGARD LOGIN STATUS CHECK -->
 <!-- END ASGARD BETA LOGIN -->
 
 <!-- SUPABASE CONNECTION - WEATHER WIELDERS OF ASGARD -->
@@ -1605,6 +1635,33 @@ document.getElementById("asgardBetaLoginButton").addEventListener("click", async
   }
 });
 </script>
+  <!-- ASGARD LOGIN STATUS CHECK -->
+<script>
+async function checkAsgardLoginStatus() {
+  const status = document.getElementById("asgardLoginStatus");
+
+  if (!status) return;
+
+  try {
+    const { data, error } = await asgardSupabase.auth.getUser();
+
+    if (error || !data.user) {
+      status.textContent = "🔒 Not Signed In";
+    } else {
+      status.textContent = "🔓 Signed In";
+    }
+  } catch (error) {
+    status.textContent = "⚠️ Unable to verify login";
+  }
+}
+
+checkAsgardLoginStatus();
+
+asgardSupabase.auth.onAuthStateChange(() => {
+  setTimeout(checkAsgardLoginStatus, 0);
+});
+</script>
+<!-- END ASGARD LOGIN STATUS CHECK -->
 <!-- END ASGARD BETA LOGIN CONTROL -->
 
 <!-- END SUPABASE CONNECTION -->
