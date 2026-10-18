@@ -1530,6 +1530,40 @@ function closeLightningFullscreen() {
 
 </footer>
   
+<!-- ASGARD BETA LOGIN -->
+<section id="asgardBetaLogin" style="
+  max-width:500px;
+  margin:25px auto;
+  padding:20px;
+  background:rgba(10,20,35,0.9);
+  border:1px solid #8fd3ff;
+  border-radius:12px;
+  color:white;
+  text-align:center;
+">
+  <h2>⚡ Asgard Beta Login</h2>
+  <p>Invited beta testers can sign in here.</p>
+
+  <input
+    id="asgardBetaEmail"
+    type="email"
+    placeholder="Enter your invitation email"
+    autocomplete="email"
+    style="padding:12px;width:90%;max-width:350px;"
+  >
+
+  <button
+    type="button"
+    id="asgardBetaLoginButton"
+    style="padding:12px 20px;margin-top:12px;cursor:pointer;"
+  >
+    Send Login Link
+  </button>
+
+  <p id="asgardBetaLoginMessage" aria-live="polite"></p>
+</section>
+<!-- END ASGARD BETA LOGIN -->
+
 <!-- SUPABASE CONNECTION - WEATHER WIELDERS OF ASGARD -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
@@ -1539,6 +1573,40 @@ function closeLightningFullscreen() {
     "sb_publishable_UPYdxjrwu8QlkuZFNCFMFg_BeL6NUeW"
   );
 </script>
+  
+<!-- ASGARD BETA LOGIN CONTROL -->
+<script>
+document.getElementById("asgardBetaLoginButton").addEventListener("click", async function () {
+  const email = document.getElementById("asgardBetaEmail").value.trim();
+  const message = document.getElementById("asgardBetaLoginMessage");
+
+  if (!email) {
+    message.textContent = "Please enter your invitation email.";
+    return;
+  }
+
+  message.textContent = "Requesting your login link...";
+
+  try {
+    const { error } = await asgardSupabase.auth.signInWithOtp({
+      email: email,
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: "https://thors-weather.vercel.app/index.html"
+      }
+    });
+
+    if (error) throw error;
+
+    message.textContent = "If your email is eligible, check your inbox for a login link.";
+  } catch (error) {
+    console.error("Asgard beta login error:", error);
+    message.textContent = "Unable to send a login link right now. Please try again later.";
+  }
+});
+</script>
+<!-- END ASGARD BETA LOGIN CONTROL -->
+
 <!-- END SUPABASE CONNECTION -->
 
 </body>
