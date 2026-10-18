@@ -270,7 +270,7 @@ input {
   </div>
 
   <div class="card" style="background:rgba(10,20,35,0.50);border:1px solid rgba(143,211,255,0.25);">
-    <h2 id="location">Current Weather</h2>
+    <h2 id="location" style="scroll-margin-top:20px;">Current Weather</h2>
     <div id="temperature">--°F</div>
     <p id="conditions"></p>
     <p id="wind"></p>
@@ -781,6 +781,15 @@ $("alertBanner").style.display = features.length ? "block" : "none"; $("alertBan
     }
 
     $("status").textContent = "Weather lookup complete.";
+    // Smoothly scroll to the weather results after a successful search
+const weatherResults = document.getElementById("location");
+
+if (weatherResults) {
+  weatherResults.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
     if (lightningMap) { lightningMap.invalidateSize(); lightningMap.setView([place.latitude, place.longitude], 8); }
    const blitzortungLink = document.querySelector('a[href*="blitzortung.org"]');
 
