@@ -410,11 +410,55 @@ $("alertBanner").style.display = "none";
       }
 
     } else {
-      // Look up city names
+           // Look up city names and recognize US state names or abbreviations
+      const stateCodes = {
+        AL:"Alabama", AK:"Alaska", AZ:"Arizona", AR:"Arkansas",
+        CA:"California", CO:"Colorado", CT:"Connecticut",
+        DE:"Delaware", FL:"Florida", GA:"Georgia", HI:"Hawaii",
+        ID:"Idaho", IL:"Illinois", IN:"Indiana", IA:"Iowa",
+        KS:"Kansas", KY:"Kentucky", LA:"Louisiana", ME:"Maine",
+        MD:"Maryland", MA:"Massachusetts", MI:"Michigan",
+        MN:"Minnesota", MS:"Mississippi", MO:"Missouri",
+        MT:"Montana", NE:"Nebraska", NV:"Nevada",
+        NH:"New Hampshire", NJ:"New Jersey", NM:"New Mexico",
+        NY:"New York", NC:"North Carolina", ND:"North Dakota",
+        OH:"Ohio", OK:"Oklahoma", OR:"Oregon",
+        PA:"Pennsylvania", RI:"Rhode Island",
+        SC:"South Carolina", SD:"South Dakota",
+        TN:"Tennessee", TX:"Texas", UT:"Utah",
+        VT:"Vermont", VA:"Virginia", WA:"Washington",
+        WV:"West Virginia", WI:"Wisconsin", WY:"Wyoming",
+        DC:"District of Columbia"
+      };
+
+      const searchParts = city.trim().replace(/,/g, " ").split(/\s+/);
+      let searchCity = city.trim();
+      let requestedState = "";
+
+      for (const [code, name] of Object.entries(stateCodes)) {
+        const stateWords = name.split(" ");
+        const lastWords = searchParts.slice(-stateWords.length).join(" ");
+
+        if (lastWords.toLowerCase() === name.toLowerCase()) {
+          requestedState = name;
+          searchCity = searchParts.slice(0, -stateWords.length).join(" ");
+          break;
+        }
+      }
+
+      if (!requestedState && searchParts.length > 1) {
+        const lastPart = searchParts[searchParts.length - 1].toUpperCase();
+
+        if (stateCodes[lastPart]) {
+          requestedState = stateCodes[lastPart];
+          searchCity = searchParts.slice(0, -1).join(" ");
+        }
+      }
+
       const geoResponse = await fetch(
         "https://geocoding-api.open-meteo.com/v1/search?name=" +
-        encodeURIComponent(city) +
-        "&count=10&language=en&format=json"
+        encodeURIComponent(searchCity) +
+        "&count=100&language=en&format=json"
       );
 
       if (!geoResponse.ok) {
@@ -422,7 +466,17 @@ $("alertBanner").style.display = "none";
       }
 
       const geo = await geoResponse.json();
-      place = (geo.results || [])[0];
+      const results = geo.results || [];
+
+      if (requestedState) {
+        place = results.find(result =>
+          result.country_code === "US" &&
+          result.admin1?.toLowerCase() === requestedState.toLowerCase()
+        );
+      } else {
+        place = results.find(result => result.country_code === "US") ||
+                results[0];
+      }
     }
 
     if (!place) {
