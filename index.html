@@ -236,7 +236,19 @@ input {
   <button type="button" id="quickSaveLocation" style="flex-shrink:0; padding:10px 8px; border:none; border-left:1px solid #ccc; border-radius:0; background:#eaf4ff; color:#173451; font-size:12px; cursor:pointer;">⚡ Save</button>
 </div>
     <button id="search" style="display:block; width:280px; max-width:100%; margin:10px auto; box-sizing:border-box; padding:12px 8px;"><img src="a_clean_high_detail_fantasy_styled_icon_illustra.png" class="mjolnir-img" alt=""> Get My Weather</button>
-  <button
+  <div id="betaNotice" style="max-width:600px; margin:12px auto; padding:12px; background:rgba(10,20,35,0.85); color:white; border:1px solid #8fd3ff; border-radius:10px; text-align:center; font-size:13px; line-height:1.5;">
+  <strong>⚡ Thor's Weather — Public Beta</strong>
+  <p style="margin:8px 0;">
+    Thor's Weather is currently in public beta. Some features may be incomplete or experience occasional errors.
+  </p>
+  <p style="margin:8px 0;">
+    Weather forecasts, lightning information, and alerts are provided for informational purposes only. Do not rely on this service as your sole source of weather warnings or emergency information.
+  </p>
+  <p style="margin:8px 0 0;">
+    Always follow official National Weather Service alerts and local emergency instructions.
+  </p>
+</div>
+    <button
   type="button"
   id="lightningPanelButton"
   onclick="document.getElementById('lightningPanel').classList.toggle('open')"
