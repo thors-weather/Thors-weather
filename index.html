@@ -12,8 +12,19 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
- background: url("yggdrasil-asgard-background.png") center center / cover no-repeat fixed;
+  background: url("yggdrasil-asgard-background.png") center center / cover no-repeat fixed;
   color: white;
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-color: #101827;
+  }
+}
 }
 
 
@@ -223,7 +234,7 @@ input {
 <div id="alertBanner" role="alert" style="display:none;background:#8b2029;color:white;padding:16px;border-radius:10px;margin:12px 0;font-weight:bold;cursor:pointer;" onclick="document.getElementById('alertDetails').style.display='block';">
 </div>
   <div class="card search-card">
-    <h2>Find Your Weather</h2>
+    <h2 style="text-align:center;">Find Your Weather</h2>
     <div style="display:flex; align-items:center; width:240px; max-width:100%; margin:0 auto; border:1px solid #8fd3ff; border-radius:8px; overflow:hidden; background:white;">
   <input id="city" placeholder="City or ZIP" style="width:100%; min-width:0; flex:1; border:none; padding:10px 8px; box-sizing:border-box;">
   <button type="button" id="quickSaveLocation" style="flex-shrink:0; padding:10px 8px; border:none; border-left:1px solid #ccc; border-radius:0; background:#eaf4ff; color:#173451; font-size:12px; cursor:pointer;">⚡ Save</button>
