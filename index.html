@@ -728,7 +728,11 @@ $("alertBanner").style.display = features.length ? "block" : "none"; $("alertBan
 
     $("status").textContent = "Weather lookup complete.";
     if (lightningMap) { lightningMap.invalidateSize(); lightningMap.setView([place.latitude, place.longitude], 8); }
-    document.querySelector('a[href*="blitzortung.org"]').href = `https://maps.blitzortung.org/en/#6/${place.latitude}/${place.longitude}`;
+   const blitzortungLink = document.querySelector('a[href*="blitzortung.org"]');
+
+if (blitzortungLink) {
+  blitzortungLink.href = `https://maps.blitzortung.org/en/#6/${place.latitude}/${place.longitude}`;
+}
 
   } catch (error) {
     $("status").textContent =
