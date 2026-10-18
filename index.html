@@ -848,17 +848,14 @@ function addLightningLocation() {
     return;
   }
 
-   lightningInput.value = weatherInput.value.trim();
+    lightningInput.value = weatherInput.value.trim();
   addLightningLocation();
 
-  // Smoothly scroll to saved lightning locations
-  const savedLocations = document.getElementById("savedLightningLocations");
+  // Open the saved lightning locations panel
+  const lightningPanel = document.getElementById("lightningPanel");
 
-  if (savedLocations) {
-    savedLocations.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
+  if (lightningPanel) {
+    lightningPanel.classList.add("open");
   }
 });;
 
