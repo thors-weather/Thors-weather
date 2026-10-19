@@ -351,6 +351,34 @@ input {
     Premium subscriptions are not available during public beta. No payment information is being collected.
   </p>
 </div>
+  <!-- THOR'S ROAD WATCH - GPS MAP -->
+<section id="thorsRoadWatch" class="card"
+  style="background:rgba(10,20,35,0.75);border:1px solid #8fd3ff;">
+
+  <h2 style="text-align:center;">⚡ Thor's Road Watch</h2>
+
+  <p style="text-align:center;">
+    Track your location and watch for weather along your journey.
+  </p>
+
+  <div id="roadWatchMap"
+    style="width:100%;height:350px;border-radius:12px;">
+  </div>
+<!-- THOR'S ROAD WATCH - GPS BUTTON -->
+<button
+  type="button"
+  id="roadWatchGpsButton"
+  style="display:block;width:280px;max-width:100%;margin:15px auto;padding:12px;background:#243b55;color:white;border:1px solid #8fd3ff;border-radius:8px;cursor:pointer;"
+>
+  📍 Start Live GPS Tracking
+</button>
+<!-- END ROAD WATCH GPS BUTTON -->
+  <p id="roadWatchStatus" style="text-align:center;">
+    GPS tracking is not active.
+  </p>
+
+</section>
+<!-- END THOR'S ROAD WATCH -->
 </main>
 <div id="lightning-warning"
      role="status"
@@ -1699,7 +1727,87 @@ asgardSupabase.auth.onAuthStateChange(() => {
 <!-- END ASGARD MEMBERSHIP ACCESS CHECK -->
   <!-- END ASGARD BETA LOGIN CONTROL -->
 <!-- END SUPABASE CONNECTION -->
+<!-- THOR'S ROAD WATCH - MAP INITIALIZATION -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const mapElement = document.getElementById("roadWatchMap");
 
+  if (!mapElement || typeof L === "undefined") return;
+
+  const roadWatchMap = L.map("roadWatchMap").setView(
+    [39.5, -98.35],
+    4
+  );
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors"
+    }
+  ).addTo(roadWatchMap);
+
+  window.roadWatchMap = roadWatchMap;
+  // THOR'S ROAD WATCH - LIVE GPS TRACKING
+let roadWatchMarker = null;
+let roadWatchTrackingId = null;
+
+const gpsButton = document.getElementById("roadWatchGpsButton");
+const gpsStatus = document.getElementById("roadWatchStatus");
+
+gpsButton.addEventListener("click", function() {
+  if (roadWatchTrackingId !== null) {
+    navigator.geolocation.clearWatch(roadWatchTrackingId);
+    roadWatchTrackingId = null;
+    gpsButton.textContent = "📍 Start Live GPS Tracking";
+    gpsStatus.textContent = "GPS tracking stopped.";
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    gpsStatus.textContent = "GPS is not supported on this device.";
+    return;
+  }
+
+  gpsStatus.textContent = "Waiting for GPS location...";
+
+  roadWatchTrackingId = navigator.geolocation.watchPosition(
+    function(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      if (!roadWatchMarker) {
+        roadWatchMarker = L.marker([lat, lon]).addTo(roadWatchMap);
+      } else {
+        roadWatchMarker.setLatLng([lat, lon]);
+      }
+
+      roadWatchMap.setView([lat, lon], 15);
+
+      gpsStatus.textContent = "📍 Live GPS tracking active.";
+      gpsButton.textContent = "⏹ Stop Live GPS Tracking";
+    },
+    function(error) {
+      gpsStatus.textContent = "GPS unavailable: " + error.message;
+
+      if (roadWatchTrackingId !== null) {
+        navigator.geolocation.clearWatch(roadWatchTrackingId);
+        roadWatchTrackingId = null;
+      }
+
+      gpsButton.textContent = "📍 Start Live GPS Tracking";
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 15000
+    }
+  );
+});
+// END THOR'S ROAD WATCH - LIVE GPS TRACKING
+});
+</script>
+<!-- END THOR'S ROAD WATCH MAP INITIALIZATION -->
 </body>
 </html>
  
