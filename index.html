@@ -356,6 +356,19 @@ input {
   style="background:rgba(10,20,35,0.75);border:1px solid #8fd3ff;">
 
   <h2 style="text-align:center;">⚡ Thor's Road Watch</h2>
+  <!-- THOR'S CHARIOT TOGGLE BUTTON -->
+<button
+  type="button"
+  id="roadWatchToggle"
+  aria-expanded="false"
+  aria-controls="roadWatchContent"
+  style="display:block;margin:15px auto;padding:14px 24px;background:#243b55;color:white;border:1px solid #8fd3ff;border-radius:12px;cursor:pointer;font-size:18px;"
+>
+  ⚡ Open Thor's Road Watch
+</button>
+<!-- END THOR'S CHARIOT TOGGLE BUTTON -->
+    <!-- ROAD WATCH EXPANDABLE CONTENT -->
+  <div id="roadWatchContent" style="display:none;">
 
   <p style="text-align:center;">
     Track your location and watch for weather along your journey.
@@ -376,7 +389,8 @@ input {
   <p id="roadWatchStatus" style="text-align:center;">
     GPS tracking is not active.
   </p>
-
+  <!-- END ROAD WATCH EXPANDABLE CONTENT -->
+  </div>
 </section>
 <!-- END THOR'S ROAD WATCH -->
 </main>
@@ -1808,6 +1822,33 @@ gpsButton.addEventListener("click", function() {
 });
 </script>
 <!-- END THOR'S ROAD WATCH MAP INITIALIZATION -->
+  <!-- THOR'S ROAD WATCH - EXPAND AND COLLAPSE -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const toggle = document.getElementById("roadWatchToggle");
+  const content = document.getElementById("roadWatchContent");
+
+  if (!toggle || !content) return;
+
+  toggle.addEventListener("click", function() {
+    const isOpening = content.style.display === "none";
+
+    content.style.display = isOpening ? "block" : "none";
+    toggle.setAttribute("aria-expanded", String(isOpening));
+
+    toggle.textContent = isOpening
+      ? "⚡ Close Thor's Road Watch"
+      : "⚡ Open Thor's Road Watch";
+
+    if (isOpening && window.roadWatchMap) {
+      setTimeout(function() {
+        window.roadWatchMap.invalidateSize();
+      }, 100);
+    }
+  });
+});
+</script>
+<!-- END THOR'S ROAD WATCH - EXPAND AND COLLAPSE -->
 </body>
 </html>
  
