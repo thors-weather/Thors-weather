@@ -923,7 +923,22 @@ if (blitzortungLink) {
       "Could not check alerts. Please try again.";
   }
 }
+// ASGARD AUTOMATIC HOME WEATHER LOADING
+function loadHomeWeatherOnVisit() {
+  const homeLocation = getHomeWeatherLocation();
 
+  if (!homeLocation) return;
+
+  document.getElementById("city").value = homeLocation;
+  getWeather();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", loadHomeWeatherOnVisit);
+} else {
+  loadHomeWeatherOnVisit();
+}
+// END ASGARD AUTOMATIC HOME WEATHER LOADING
 $("search").addEventListener("click", getWeather);
 
 $("city").addEventListener("keydown", event => {
