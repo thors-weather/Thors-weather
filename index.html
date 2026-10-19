@@ -1825,7 +1825,12 @@ gpsButton.addEventListener("click", function() {
   roadWatchTrackingId = navigator.geolocation.watchPosition(
     function(position) {
       const lat = position.coords.latitude;
+    
       const lon = position.coords.longitude;
+        window.roadWatchCurrentLocation = {
+  lat: lat,
+  lon: lon
+};
 
       if (!roadWatchMarker) {
         roadWatchMarker = L.circleMarker([lat, lon], {
