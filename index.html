@@ -357,17 +357,20 @@ input {
 
   <h2 style="text-align:center;">⚡ Thor's Road Watch</h2>
   <!-- THOR'S CHARIOT TOGGLE BUTTON -->
+  <button type="button" id="roadwatchChariotButton"
+    onclick="document.getElementById('roadwatchToggle').click();"
+  aria-label="Open Thor's Road Watch"
+  style="display:block;margin:0 auto;padding:0;border:0;background:transparent;cursor:pointer;">
+  
   <img
   src="thors-road-watch-chariot.png"
   alt="Thor riding his chariot pulled by Tanngrisnir and Tanngnjóstr"
   style="display:block;width:150px;max-width:100%;height:auto;margin:0 auto 10px;cursor:pointer;"
-    onclick="document.getElementById('roadwatchToggle').click(); return false;"
-    role="button"
-tabindex="0"
-aria-label="Open Thor's Road Watch"
-onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"
+   
+ 
 >
-<button
+  </button>
+    <button
   type="button"
   id="roadWatchToggle"
   aria-expanded="false"
