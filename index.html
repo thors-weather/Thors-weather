@@ -361,6 +361,11 @@ input {
   src="thors-road-watch-chariot.png"
   alt="Thor riding his chariot pulled by Tanngrisnir and Tanngnjóstr"
   style="display:block;width:150px;max-width:100%;height:auto;margin:0 auto 10px;"
+    onclick="document.getElementById('roadwatchToggle').click();"
+    role="button"
+tabindex="0"
+aria-label="Open Thor's Road Watch"
+onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"
 >
 <button
   type="button"
