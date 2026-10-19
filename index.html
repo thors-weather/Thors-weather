@@ -1808,7 +1808,13 @@ gpsButton.addEventListener("click", function() {
       const lon = position.coords.longitude;
 
       if (!roadWatchMarker) {
-        roadWatchMarker = L.marker([lat, lon]).addTo(roadWatchMap);
+        roadWatchMarker = L.circleMarker([lat, lon], {
+  radius: 10,
+  color: "#ffffff",
+  weight: 3,
+  fillColor: "#ff0000",
+  fillOpacity: 1
+}).addTo(roadWatchMap);
       } else {
         roadWatchMarker.setLatLng([lat, lon]);
       }
