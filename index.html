@@ -1856,7 +1856,14 @@ document.addEventListener("DOMContentLoaded", function() {
     toggle.textContent = isOpening
       ? "⚡ Close Thor's Road Watch"
       : "⚡ Open Thor's Road Watch";
+// Automatically start GPS when Road Watch opens
+if (isOpening) {
+  const gpsButton = document.getElementById("roadWatchGpsButton");
 
+if (gpsButton && gpsButton.textContent.includes("Start Live GPS Tracking")) {
+    gpsButton.click();
+  }
+}
     if (isOpening && window.roadWatchMap) {
       setTimeout(function() {
         window.roadWatchMap.invalidateSize();
