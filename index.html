@@ -1805,7 +1805,8 @@ let roadWatchTrackingId = null;
 
 const gpsButton = document.getElementById("roadWatchGpsButton");
 const gpsStatus = document.getElementById("roadWatchStatus");
-
+const planRouteButton = document.getElementById("roadWatchPlanRouteButton");
+const destinationInput = document.getElementById("roadWatchDestination");
 gpsButton.addEventListener("click", function() {
   if (roadWatchTrackingId !== null) {
     navigator.geolocation.clearWatch(roadWatchTrackingId);
