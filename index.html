@@ -1872,7 +1872,7 @@ gpsButton.addEventListener("click", function() {
 // END THOR'S ROAD WATCH - LIVE GPS TRACKING
 // THOR'S ROAD WATCH - JOURNEY PLANNER BUTTON
 if (planRouteButton && destinationInput) {
-  planRouteButton.addEventListener("click", function() {
+  planRouteButton.addEventListener("click", async function() {
     const destination = destinationInput.value.trim();
 
     if (!destination) {
@@ -1886,6 +1886,47 @@ if (planRouteButton && destinationInput) {
     }
     
 // THOR'S ROAD WATCH - ROUTE CALCULATION GOES HERE
+    const destinationSearchUrl =
+  "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+  encodeURIComponent(destination);
+  const destinationResponse = await fetch(destinationSearchUrl);
+const destinationResults = await destinationResponse.json();  
+ if (!destinationResults.length) {
+  alert("Thor could not find that destination. Please check the city or ZIP code.");
+  return;
+}   
+    const destinationLat = Number(destinationResults[0].lat);
+const destinationLon = Number(destinationResults[0].lon);
+    const startLat = window.roadwatchCurrentLocation.lat;
+const startLon = window.roadwatchCurrentLocation.lon;
+    const routeUrl =
+  "https://router.project-osrm.org/route/v1/driving/" +
+  startLon + "," + startLat + ";" +
+  destinationLon + "," + destinationLat +
+  "?overview=full&geometries=geojson";
+    const routeResponse = await fetch(routeUrl);
+const routeData = await routeResponse.json();
+    if (!routeResponse.ok || !routeData.routes || !routeData.routes.length) {
+  alert("Thor could not calculate a driving route to that destination.");
+  return;
+}
+    // Remove the previous driving route, if one exists
+if (roadWatchRouteLine) {
+  roadwatchMap.removeLayer(roadWatchRouteLine);
+}
+
+// Draw the new driving route in blue
+roadWatchRouteLine = L.geoJSON(routeData.routes[0].geometry, {
+  style: {
+    color: "#0088ff",
+    weight: 5,
+    opacity: 0.9
+  }
+}).addTo(roadwatchMap);
+  // Show the entire driving route on the map
+roadwatchMap.fitBounds(roadWatchRouteLine.getBounds(), {
+  padding: [30, 30]
+});  
   });
 }
 });
