@@ -1924,7 +1924,7 @@ roadWatchRouteLine = L.geoJSON(routeData.routes[0].geometry, {
   }
 }).addTo(roadwatchMap);
   // Show the entire driving route on the map
-roadwatchMap.fitBounds(roadWatchRouteLine.getBounds(), {
+roadwatchMap.fitBounds(roadwatchRouteLine.getBounds(), {
   padding: [30, 30]
 });  
   });
