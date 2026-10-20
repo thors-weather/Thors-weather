@@ -1381,7 +1381,7 @@ if (/^\d{5}$/.test(location)) {
   const response = await fetch(
     "https://geocoding-api.open-meteo.com/v1/search?name=" +
     encodeURIComponent(cityName) +
-    "&count=10&language=en&format=json"
+    "&count=100&language=en&format=json"
   );
 
   if (!response.ok) {
