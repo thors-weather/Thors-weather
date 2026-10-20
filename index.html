@@ -1,4 +1,1975 @@
-if (!place) {
+
+<!DOCTYPE html>
+<html lang="en">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weather Wielders of Asgard</title>
+<!-- ASGARD HOME SCREEN APP CONFIGURATION -->
+<link rel="manifest" href="/manifest.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="/asgard-apple-touch-icon.png">
+<!-- END ASGARD HOME SCREEN APP CONFIGURATION -->
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: url("yggdrasil-asgard-background.png") center center / cover no-repeat fixed;
+  color: white;
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-color: #101827;
+  }
+}
+
+/* Chromebook and desktop background adjustment */
+@media screen and (min-width: 601px) {
+  body {
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+  }
+  .search-card {
+    margin-top: 300px !important;
+}
+}
+
+
+main {
+  width: 100%;
+  max-width: 700px;
+  margin: auto;
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.card {
+  background: transparent;
+  padding: 18px;
+  margin: 18px 0;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+  
+
+input, button {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border-radius: 8px;
+  font-size: 16px;
+}
+.search-card {  
+margin-top: 180px;
+  background: rgba(10, 20, 35, 0.30);
+  border: 1px solid rgba(143, 211, 255, 0.45);
+  border-radius: 12px;
+  padding: 18px;
+}
+button {
+  background: rgba(29, 43, 64, 0.72);
+  color: white;
+  border: 0;
+  font-weight: bold;
+}
+  /* Compact weather search box */
+#city {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+}
+
+#quickSaveLocation {
+  flex: 0 0 65px;
+  width: 65px;
+  min-width: 65px;
+  max-width: 65px;
+  margin: 0;
+  padding: 8px 2px;
+  font-size: 11px;
+}
+  .mjolnir {
+  display: inline-block;
+  font-size: 24px;
+  color: #d9e7f5;
+  text-shadow: 0 0 6px #8fd3ff;
+  transform: rotate(-15deg);
+  margin-right: 6px;
+  }
+
+  .mjolnir-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+.mjolnir-img.active {
+  animation: thorHammer 2s ease-in-out;
+}
+
+@keyframes thorHammer {
+  0%   { transform: scale(1); filter: brightness(1); }
+  15%  { transform: scale(2.5); filter: brightness(3) drop-shadow(0 0 15px #00bfff); }
+  30%  { transform: scale(2.2); filter: brightness(0.8); }
+  45%  { transform: scale(2.7); filter: brightness(4) drop-shadow(0 0 25px #8fd3ff); }
+  60%  { transform: scale(2.3); filter: brightness(1); }
+  75%  { transform: scale(2.6); filter: brightness(4) drop-shadow(0 0 30px #00bfff); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+  
+input {
+  background: rgba(255, 255, 255, 0.85);
+}
+#temperature {
+  font-size: 44px;
+  font-weight: bold;
+}
+
+.alert {
+  background: #54252b;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+}/* THOR'S WEATHER VIDEO ANIMATION OVERLAY */
+#thorLightningAnimation {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  background: #050a19;
+  overflow: hidden;
+}
+#thorLightningVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+#thorLightningVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+ #lightningPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(340px, 90vw);
+  height: 100vh;
+  background: #ffffff;
+  color: #222222;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  z-index: 9999;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.25);
+  transform: translateX(110%);
+  transition: transform 0.35s ease;
+}
+
+#lightningPanel.open {
+  transform: translateX(0);
+} 
+</style>
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+
+<body>
+  <!-- ODIN THE ALL-FATHER WARNING OVERLAY -->
+  <!-- FREYR RAIN ANIMATION -->
+<div id="freyrRainOverlay"
+     onclick="closeFreyrRain()"
+     style="display:none;position:fixed;inset:0;background:#050a19;z-index:100002;cursor:pointer;">
+
+  <video id="freyrRainVideo"
+         src="freyr-rain.mp4"
+         playsinline
+         preload="auto"
+    onended="closeFreyrRain()"
+         style="width:100%;height:100%;object-fit:cover;">
+  </video>
+
+</div>
+<!-- END FREYR RAIN ANIMATION -->
+  <!-- SKADI WINTER ANIMATION -->
+<div id="skadiWinterOverlay"
+     onclick="closeSkadiWinter()"
+     style="display:none;position:fixed;inset:0;background:#050a19;z-index:100003;cursor:pointer;">
+  <video id="skadiWinterVideo"
+         src="skadi-winter.mp4"
+         playsinline preload="auto"
+         style="width:100%;height:100%;object-fit:cover;">
+  </video>
+</div>
+<!-- END SKADI WINTER ANIMATION -->
+  <!-- NJORD WIND ANIMATION -->
+<div id="njordWindOverlay"
+     onclick="closeNjordWind()"
+     style="display:none;position:fixed;inset:0;background:#050a19;z-index:100004;cursor:pointer;">
+  <video id="njordWindVideo"
+         src="njord-wind.mp4"
+         playsinline preload="auto"
+         style="width:100%;height:100%;object-fit:cover;">
+  </video>
+</div>
+<!-- END NJORD WIND ANIMATION -->
+<div id="odinWarningOverlay"
+     onclick="closeOdinWarning()"
+     style="display:none;position:fixed;inset:0;background:#050a19;z-index:100001;cursor:pointer;">
+
+  <video id="odinWarningVideo"
+         src="odin-warning.mp4"
+         playsinline
+         preload="auto"
+         style="width:100%;height:100%;object-fit:cover;">
+  </video>
+
+</div>
+<!-- END ODIN WARNING OVERLAY -->
+
+<header style="width:100%;box-sizing:border-box;text-align:center;">
+
+</header>
+
+<main>
+<div id="alertBanner" role="alert" style="display:none;background:#8b2029;color:white;padding:16px;border-radius:10px;margin:12px 0;font-weight:bold;cursor:pointer;" onclick="document.getElementById('alertDetails').style.display='block';">
+</div>
+  <div class="card search-card">
+    <h2 style="text-align:center;">Find Your Weather</h2>
+    <div style="display:flex; align-items:center; width:240px; max-width:100%; margin:0 auto; border:1px solid #8fd3ff; border-radius:8px; overflow:hidden; background:white;">
+  <input id="city" placeholder="City or ZIP" onkeydown="if(event.key === 'Enter') { event.preventDefault(); document.getElementById('search').click(); }" style="width:100%; min-width:0; flex:1; border:none; padding:10px 8px; box-sizing:border-box;">
+  <button type="button" id="quickSaveLocation" style="flex-shrink:0; padding:10px 8px; border:none; border-left:1px solid #ccc; border-radius:0; background:#eaf4ff; color:#173451; font-size:12px; cursor:pointer;">⚡ Save</button>
+</div>
+    <button id="search" style="display:block; width:280px; max-width:100%; margin:10px auto; box-sizing:border-box; padding:12px 8px;"><img src="a_clean_high_detail_fantasy_styled_icon_illustra.png" class="mjolnir-img" alt=""> Get My Weather</button>
+ <details id="betaNotice" style="max-width:600px; margin:12px auto; padding:12px; background:rgba(10,20,35,0.85); color:white; border:1px solid #8fd3ff; border-radius:10px; text-align:center; font-size:13px; line-height:1.5;">
+ <summary style="cursor:pointer; font-weight:bold; padding:4px;">
+  ⚡ Weather Wielders of Asgard — Public Beta
+</summary>
+<p style="margin:8px 0;">
+  Weather Wielders of Asgard is currently in public beta. Some features may be incomplete or experience occasional errors.
+</p>
+  <p style="margin:8px 0;">
+    Weather forecasts, lightning information, and alerts are provided for informational purposes only. Do not rely on this service as your sole source of weather warnings or emergency information.
+  </p>
+    <p style="margin:8px 0;">
+  ⚡ Lightning Safety: Lightning detection may be delayed, incomplete, or temporarily unavailable. Not all lightning strikes are guaranteed to be detected. The absence of a lightning warning does not mean conditions are safe. If you hear thunder, move indoors immediately.
+</p>
+  <p style="margin:8px 0 0;">
+    Always follow official National Weather Service alerts and local emergency instructions.
+  </p>
+</details>
+    <button
+  type="button"
+  id="lightningPanelButton"
+  onclick="document.getElementById('lightningPanel').classList.toggle('open')"
+  style="display:block; width:280px; max-width:100%; margin:10px auto; padding:12px; background:#243b55; color:white; border:none; border-radius:8px; cursor:pointer;"
+>
+  ⚡ My Lightning Locations
+<button
+  type="button"
+  onclick="openLightningFullscreen()"
+  style="display:block; width:280px; max-width:100%; margin:10px auto; padding:12px; box-sizing:border-box; background:#2189ed; color:white; border:none; border-radius:8px; font-weight:bold; text-align:center; cursor:pointer;"
+>
+  ⚡ Open Live Lightning Map
+</button>
+<p id="status" style="text-align:center; width:100%; margin:15px auto;">Enter a location to begin.</p>
+  </div>
+
+  <div class="card" style="background:rgba(10,20,35,0.50);border:1px solid rgba(143,211,255,0.25);">
+    <h2 id="location" style="scroll-margin-top:20px;">Current Weather</h2>
+    <div id="temperature">--°F</div>
+    <p id="conditions"></p>
+    <p id="wind"></p>
+  </div>
+<div class="card" style="background:rgba(10,20,35,0.50);border:1px solid rgba(143,211,255,0.25);">
+  <h2>⚡ 5-Day Weather Forecast</h2>
+  <div id="forecast">Search for a location to see the forecast.</div>
+</div>
+  <div class="card">
+    <h2 style="display:none;">⚠️ Official Weather Alerts</h2>
+   <div id="alertDetails" style="display:none;position:fixed;inset:0;background:#101820;color:white;z-index:9999;overflow-y:auto;padding:20px;">
+   <button onclick="document.getElementById('alertDetails').style.display='none';" style="background:#8b2029;color:white;border:none;border-radius:8px;padding:12px 18px;font-weight:bold;font-size:16px;cursor:pointer;margin-bottom:20px;">← Back to Weather</button>
+     <div id="alerts">Search for a location to check alerts.</div>
+   </div>
+  </div>
+<div class="card" style="background:rgba(10,20,35,0.50);border:1px solid rgba(143,211,255,0.25);">
+ <div>
+  <summary><h2 style="display:inline;">⚡ Live Lightning Tracker</h2></summary>
+   <div id="lightningFullscreen" style="display:none;position:fixed;inset:0;z-index:10000;background:#101820;">
+  <button type="button" onclick="closeLightningFullscreen()" style="position:absolute;top:15px;left:15px;z-index:10001;width:auto;padding:12px 18px;background:#243b55;color:white;border:none;border-radius:8px;cursor:pointer;">
+    ← Back to Weather
+  </button>
+  <div id="lightningMap" style="width:100%;height:100%;min-height:400px;"></div>
+     </div>
+  <p>View lightning strikes and thunderstorms on a live map.</p>
+ 
+  <p>Lightning alerts for your selected location: Coming soon.</p>
+<div>
+  <!-- Hidden input needed for the working quick-save button -->
+  <input id="lightningLocation" type="hidden">
+
+
+<div id="lightningPanel" onclick="if(event.target === this) this.classList.remove('open')">
+  <button
+    type="button"
+    onclick="document.getElementById('lightningPanel').classList.remove('open')"
+    style="float:right; padding:8px;"
+  >
+    ✕ Close
+  </button>
+
+  <h3>⚡ My Lightning Locations</h3>
+
+  <div id="savedLightningLocations"></div>
+</div>
+  </div>
+
+</div>
+ <div id="premiumComingSoon" style="max-width:600px; margin:20px auto; padding:18px; background:rgba(10,20,35,0.85); border:1px solid #8fd3ff; border-radius:12px; color:white; text-align:center;">
+  <h3 style="margin-top:0;">⚡ Weather Wielders of Asgard Premium</h3>
+  <p style="font-size:18px; font-weight:bold; color:#8fd3ff;">
+    Coming Soon
+  </p>
+  <p>
+    We're developing additional Premium features to make your weather experience even better.
+  </p>
+  <p style="font-size:13px;">
+    Planned price: $2.99/month with a 15-day free trial.
+  </p>
+  <p style="font-size:12px; opacity:0.85;">
+    Premium subscriptions are not available during public beta. No payment information is being collected.
+  </p>
+</div>
+  <!-- THOR'S ROAD WATCH - GPS MAP -->
+<section id="thorsRoadWatch" class="card"
+  style="background:rgba(10,20,35,0.75);border:1px solid #8fd3ff;">
+
+  <h2 style="text-align:center;">⚡ Thor's Road Watch</h2>
+  <!-- THOR'S CHARIOT TOGGLE BUTTON -->
+  <button type="button" id="roadwatchChariotButton"
+    onclick="const btn=document.getElementById('roadWatchToggle'); if(btn) btn.click();"
+  aria-label="Open Thor's Road Watch"
+  style="display:block;margin:0 auto;padding:0;border:0;background:transparent;cursor:pointer;">
+  
+  <img
+  src="thors-road-watch-chariot.png"
+  alt="Thor riding his chariot pulled by Tanngrisnir and Tanngnjóstr"
+  style="display:block;width:150px;max-width:100%;height:auto;margin:0 auto 10px;cursor:pointer;"
+   
+ 
+>
+  </button>
+  <p id="roadwatchChariotInstruction"
+   style="text-align:center;color:#8fd3ff;font-weight:bold;font-size:16px;margin:10px 0;text-shadow:0 0 8px #8fd3ff;">
+  ⚡ Tap Thor's Chariot to Begin Your Journey ⚡
+</p>
+    <button
+  type="button"
+  id="roadWatchToggle"
+  aria-expanded="false"
+  aria-controls="roadWatchContent"
+  style="display:none;margin:15px auto;padding:14px 24px;background:#243b55;color:white;border:1px solid #8fd3ff;border-radius:12px;cursor:pointer;font-size:18px;"
+>
+  ⚡ Open Thor's Road Watch
+</button>
+<!-- END THOR'S CHARIOT TOGGLE BUTTON -->
+    <!-- ROAD WATCH EXPANDABLE CONTENT -->
+  <div id="roadWatchContent" style="display:none;">
+
+  <p style="text-align:center;">
+    Track your location and watch for weather along your journey.
+  </p>
+
+  <div id="roadWatchMap"
+    style="width:100%;height:350px;border-radius:12px;">
+  </div>
+<!-- THOR'S ROAD WATCH - GPS BUTTON -->
+<button
+  type="button"
+  id="roadWatchGpsButton"
+  style="display:block;width:280px;max-width:100%;margin:15px auto;padding:12px;background:#243b55;color:white;border:1px solid #8fd3ff;border-radius:8px;cursor:pointer;"
+>
+  📍 Start Live GPS Tracking
+</button>
+<!-- END ROAD WATCH GPS BUTTON -->
+  <p id="roadWatchStatus" style="text-align:center;">
+    GPS tracking is not active.
+  </p>
+    <!-- THOR'S ROAD WATCH - JOURNEY PLANNER -->
+<div id="roadWatchJourneyPlanner" style="text-align:center;margin:20px 0;">
+  <h3>🛡️ Plan My Journey</h3>
+  <p>Enter your destination city or ZIP code.</p>
+
+  <input
+    type="text"
+    id="roadWatchDestination"
+    placeholder="Destination city or ZIP code"
+    style="width:90%;max-width:300px;padding:12px;border-radius:8px;"
+  >
+<button
+  type="button"
+  id="roadWatchPlanRouteButton"
+  style="display:block;width:280px;max-width:100%;margin:15px auto;padding:12px;border-radius:8px;cursor:pointer;"
+>
+  ⚡ Plan My Route
+</button>
+</div>
+<!-- END ROAD WATCH JOURNEY PLANNER -->
+  <!-- END ROAD WATCH EXPANDABLE CONTENT -->
+  </div>
+</section>
+<!-- END THOR'S ROAD WATCH -->
+</main>
+<div id="lightning-warning"
+     role="status"
+     aria-live="polite"
+     style="display:none; padding:15px; margin:10px; background:#7a3300; color:white; border-radius:10px;">
+  ⚡ Lightning activity detected near your selected location. Check the NOAA lightning map and seek shelter if thunderstorms are nearby.
+</div>
+<footer style="text-align:center;padding:20px">
+  <p>Weather data: Open-Meteo and the National Weather Service</p>
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const descriptions = {
+  0: "Clear sky",
+  1: "Mostly clear",
+  2: "Partly cloudy",
+  3: "Overcast",
+  45: "Fog",
+  48: "Freezing fog",
+  51: "Light drizzle",
+  53: "Drizzle",
+  55: "Heavy drizzle",
+  61: "Light rain",
+  63: "Rain",
+  65: "Heavy rain",
+  71: "Light snow",
+  73: "Snow",
+  75: "Heavy snow",
+  80: "Rain showers",
+  81: "Heavy rain showers",
+  82: "Heavy rain showers",
+  95: "Thunderstorm",
+  96: "Thunderstorm with hail",
+  99: "Thunderstorm with heavy hail"
+};
+let lightningMap;
+async function getWeather() {
+  const city = $("city").value.trim();
+
+  if (!city) {
+    $("status").textContent = "Enter a city or ZIP code.";
+    return;
+  }
+
+  $("status").textContent = "Searching for your location...";
+  $("alerts").textContent = "Checking official alerts...";
+$("alertBanner").style.display = "none";
+  try {
+     let place;
+
+    if (/^\d{5}$/.test(city)) {
+      // Look up U.S. ZIP codes
+      const geoResponse = await fetch(
+        "https://api.zippopotam.us/us/" +
+        encodeURIComponent(city)
+      );
+
+      if (!geoResponse.ok) {
+        throw new Error("ZIP code lookup failed.");
+      }
+
+      const geo = await geoResponse.json();
+      const zipPlace = geo.places?.[0];
+
+      if (zipPlace) {
+        place = {
+          name: zipPlace["place name"],
+          admin1: zipPlace["state abbreviation"],
+          latitude: Number(zipPlace.latitude),
+          longitude: Number(zipPlace.longitude)
+        };
+      }
+
+    } else {
+           // Look up city names and recognize US state names or abbreviations
+      const stateCodes = {
+        AL:"Alabama", AK:"Alaska", AZ:"Arizona", AR:"Arkansas",
+        CA:"California", CO:"Colorado", CT:"Connecticut",
+        DE:"Delaware", FL:"Florida", GA:"Georgia", HI:"Hawaii",
+        ID:"Idaho", IL:"Illinois", IN:"Indiana", IA:"Iowa",
+        KS:"Kansas", KY:"Kentucky", LA:"Louisiana", ME:"Maine",
+        MD:"Maryland", MA:"Massachusetts", MI:"Michigan",
+        MN:"Minnesota", MS:"Mississippi", MO:"Missouri",
+        MT:"Montana", NE:"Nebraska", NV:"Nevada",
+        NH:"New Hampshire", NJ:"New Jersey", NM:"New Mexico",
+        NY:"New York", NC:"North Carolina", ND:"North Dakota",
+        OH:"Ohio", OK:"Oklahoma", OR:"Oregon",
+        PA:"Pennsylvania", RI:"Rhode Island",
+        SC:"South Carolina", SD:"South Dakota",
+        TN:"Tennessee", TX:"Texas", UT:"Utah",
+        VT:"Vermont", VA:"Virginia", WA:"Washington",
+        WV:"West Virginia", WI:"Wisconsin", WY:"Wyoming",
+        DC:"District of Columbia"
+      };
+
+      const searchParts = city.trim().replace(/,/g, " ").split(/\s+/);
+      let searchCity = city.trim();
+      let requestedState = "";
+
+      for (const [code, name] of Object.entries(stateCodes)) {
+        const stateWords = name.split(" ");
+        const lastWords = searchParts.slice(-stateWords.length).join(" ");
+
+        if (lastWords.toLowerCase() === name.toLowerCase()) {
+          requestedState = name;
+          searchCity = searchParts.slice(0, -stateWords.length).join(" ");
+          break;
+        }
+      }
+
+      if (!requestedState && searchParts.length > 1) {
+        const lastPart = searchParts[searchParts.length - 1].toUpperCase();
+
+        if (stateCodes[lastPart]) {
+          requestedState = stateCodes[lastPart];
+          searchCity = searchParts.slice(0, -1).join(" ");
+        }
+      }
+
+      const geoResponse = await fetch(
+        "https://geocoding-api.open-meteo.com/v1/search?name=" +
+        encodeURIComponent(searchCity) +
+        "&count=100&language=en&format=json"
+      );
+
+      if (!geoResponse.ok) {
+        throw new Error("Location search failed.");
+      }
+
+      const geo = await geoResponse.json();
+      const results = geo.results || [];
+
+      if (requestedState) {
+        place = results.find(result =>
+          result.country_code === "US" &&
+          result.admin1?.toLowerCase() === requestedState.toLowerCase()
+        );
+      } else {
+        place = results.find(result => result.country_code === "US") ||
+                results[0];
+      }
+    }
+
+    if (!place) {
+      throw new Error("Location not found. Try another city or ZIP code.");
+    }
+
+    $("location").textContent =
+      place.name + (place.admin1 ? ", " + place.admin1 : "");
+       
+    // Check NOAA lightning density near the selected location
+window.checkNearbyLightning = async function(lat, lon) {
+  
+  const warning = document.getElementById("lightning-warning");
+  if (!warning) return;
+
+  warning.style.display = "none";
+
+  const url = new URL(
+    "https://nowcoast.noaa.gov/geoserver/observations/lightning_detection/ows"
+  );
+
+  const options = {
+    SERVICE: "WMS",
+    VERSION: "1.3.0",
+    REQUEST: "GetFeatureInfo",
+    LAYERS: "ldn_lightning_strike_density",
+    QUERY_LAYERS: "ldn_lightning_strike_density",
+    STYLES: "",
+    CRS: "CRS:84",
+    BBOX: `${lon - 0.145 / Math.cos(lat * Math.PI / 180)},${lat - 0.145},${lon + 0.145 / Math.cos(lat * Math.PI / 180)},${lat + 0.145}`,
+    WIDTH: "201",
+    HEIGHT: "201",
+    I: "100",
+    J: "100",
+    INFO_FORMAT: "application/json"
+  };
+
+  Object.entries(options).forEach(([key, value]) =>
+    url.searchParams.set(key, value)
+  );
+
+  try {
+   // Check the center and 8 surrounding points
+const samplePoints = [
+  [100, 100],
+  [50, 100],
+  [150, 100],
+  [100, 50],
+  [100, 150],
+  [65, 65],
+  [135, 65],
+  [65, 135],
+  [135, 135]
+];
+
+let lightningDetected = false;
+
+for (const [i, j] of samplePoints) {
+  url.searchParams.set("I", i);
+  url.searchParams.set("J", j);
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error("NOAA request failed");
+  }
+
+  const data = await response.json();
+  if (!Array.isArray(data.features) || data.features.length === 0) {
+  throw new Error("NOAA returned no lightning density features");
+}
+  const density = Number(data.features?.[0]?.properties?.Band1);
+
+  if (Number.isFinite(density) && density > 0) {
+    lightningDetected = true;
+    break;
+  }
+}
+
+// Play Thor once when lightning is detected
+if (lightningDetected) {
+  warning.textContent =
+    "⚡ NOAA reports lightning activity near this location. Seek shelter if thunderstorms are nearby.";
+  warning.style.display = "block";
+
+  if (!window.thorStormAnimationPlayed) {
+    window.thorStormAnimationPlayed = true;
+
+    if (typeof playThorLightning === "function") {
+      playThorLightning();
+    }
+  }
+} else {
+  // Reset Thor when no lightning is detected
+  window.thorStormAnimationPlayed = false;
+}
+} catch (error) {
+    console.warn("Lightning check unavailable:", error);
+  }
+}
+    // Center NOAA lightning map on the selected location
+if (typeof lightningMap !== "undefined" && lightningMap) {
+  lightningMap.setView(
+    [place.latitude, place.longitude],
+    7
+  );
+  lightningMap.invalidateSize();
+}
+// Check NOAA lightning near the selected location
+checkNearbyLightning(place.latitude, place.longitude); 
+    // Refresh lightning warning every 15 minutes
+if (window.thorsLightningAlertTimer) {
+  clearInterval(window.thorsLightningAlertTimer);
+}
+
+window.thorsLightningAlertTimer = setInterval(function() {
+  checkNearbyLightning(place.latitude, place.longitude);
+}, 900000);
+document.getElementById("weatherRadar").src = "https://www.rainviewer.com/map.html?loc=" + place.latitude + "," + place.longitude + ",7&oFa=0&oC=1&oU=0&oCS=1&oF=0&oAP=1&c=3&o=83";
+    const params = new URLSearchParams({
+      latitude: place.latitude,
+      longitude: place.longitude,
+      current:
+        "temperature_2m,apparent_temperature,weather_code," +
+        "wind_speed_10m,relative_humidity_2m",
+      temperature_unit: "fahrenheit",
+      wind_speed_unit: "mph",
+      timezone: "auto",
+      daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+      forecast_days: 5
+    });
+
+    const weatherResponse = await fetch(
+      "https://api.open-meteo.com/v1/forecast?" + params
+    );
+
+    if (!weatherResponse.ok) {
+      throw new Error("Weather unavailable.");
+    }
+
+    const data = await weatherResponse.json();
+    const c = data.current;
+// FREYR AUTOMATIC RAIN DETECTION
+const freyrRainCodes = [
+  51, 53, 55, 56, 57,
+  61, 63, 65, 66, 67,
+  80, 81, 82
+];
+
+if (
+  freyrRainCodes.includes(Number(c.weather_code)) &&
+  typeof playFreyrRain === "function"
+) {
+  playFreyrRain();
+}
+// END FREYR AUTOMATIC RAIN DETECTION
+    // NJORD AUTOMATIC WIND DETECTION
+const njordWindSpeed = Number(c.wind_speed_10m);
+
+if (
+  Number.isFinite(njordWindSpeed) &&
+  njordWindSpeed >= 25 &&
+  typeof playNjordWind === "function"
+) {
+  playNjordWind();
+}
+// END NJORD AUTOMATIC WIND DETECTION
+    $("temperature").textContent =
+      Math.round(c.temperature_2m) + "°F";
+
+    $("conditions").textContent =
+      (descriptions[c.weather_code] || "Conditions unavailable") +
+      " · Feels like " +
+      Math.round(c.apparent_temperature) +
+      "°F · Humidity " +
+      c.relative_humidity_2m + "%";
+
+    $("wind").textContent =
+      "Wind: " + Math.round(c.wind_speed_10m) + " mph";
+const forecast = $("forecast");
+forecast.replaceChildren();
+
+const days = data.daily;
+
+for (let i = 0; i < days.time.length; i++) {
+  const date = new Date(days.time[i] + "T12:00:00");
+  const day = date.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric"
+  });
+
+  const high = Math.round(days.temperature_2m_max[i]);
+  const low = Math.round(days.temperature_2m_min[i]);
+  const condition = descriptions[days.weather_code[i]] || "Weather"
+  const rain = days.precipitation_probability_max[i] ?? 0;
+
+ const item = document.createElement("div");
+
+item.style.background = "#f0f4f8";
+item.style.color = "#222";
+item.style.border = "1px solid #b8c7d9";
+item.style.borderRadius = "10px";
+item.style.padding = "12px";
+item.style.marginBottom = "10px";
+item.style.display = "block";
+  item.textContent = `${day}: ${condition} | High ${high}°F | Low ${low}°F | Rain ${rain}%`;
+  forecast.appendChild(item);
+}
+    try {
+      const response = await fetch(
+        "https://api.weather.gov/alerts/active?point=" +
+        place.latitude + "," + place.longitude,
+        {
+          headers: {
+            Accept: "application/geo+json"
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Alert request failed.");
+      }
+
+      const result = await response.json();
+      const features = result.features || [];
+      // THOR'S WEATHER — THUNDERSTORM WARNING ANIMATION
+const thorThunderstormWarning = features.some(feature =>
+  (feature.properties?.event || "").toLowerCase().includes("thunderstorm warning")
+);
+
+  // HUGINN AND MUNINN — SEVERE THUNDERSTORM WATCH
+const ravenThunderstormWatch = features.some(feature =>
+  (feature.properties?.event || "").toLowerCase() ===
+  "severe thunderstorm watch"
+);
+
+if (
+  ravenThunderstormWatch &&
+  !thorThunderstormWarning &&
+  !sessionStorage.getItem("ravensWatchPlayed")
+) {
+  sessionStorage.setItem("ravensWatchPlayed", "true");
+  playRavenAnimation();
+}
+ 
+// ODIN THE ALL-FATHER: TORNADO AND HURRICANE WARNINGS
+
+const odinWarnings = features.filter(feature => {
+  const event = (feature.properties?.event || "").toLowerCase();
+
+  return event === "tornado warning" ||
+         event === "hurricane warning";
+});
+
+if (odinWarnings.length > 0) {
+  const warningIds = odinWarnings
+    .map(feature => feature.properties?.id || feature.id)
+    .filter(Boolean)
+    .sort();
+
+  const warningKey = warningIds.length
+    ? warningIds.join("|")
+    : odinWarnings.map(feature =>
+        feature.properties?.event || "Warning"
+      ).sort().join("|");
+
+  if (sessionStorage.getItem("odinWarningPlayed") !== warningKey) {
+    sessionStorage.setItem("odinWarningPlayed", warningKey);
+
+    if (typeof playOdinWarning === "function") {
+      playOdinWarning();
+    }
+  }
+}
+     
+$("alertBanner").style.display = features.length ? "block" : "none"; $("alertBanner").textContent = features.length ? "⚠️ WEATHER ALERT: " + (features[0].properties.event || "Active weather alert") : "";
+      $("alerts").replaceChildren();
+
+      if (!features.length) {
+        $("alerts").textContent =
+          "No active alerts were returned for this location.";
+      } else {
+        features.forEach(feature => {
+          const p = feature.properties;
+          const box = document.createElement("div");
+          box.className = "alert";
+
+          const title = document.createElement("h3");
+          title.textContent = p.event || "Weather Alert";
+
+          const detail = document.createElement("p");
+          detail.textContent =
+            p.headline || p.areaDesc || "";
+
+          box.append(title, detail);
+          $("alerts").appendChild(box);
+        });
+      }
+    } catch {
+      $("alerts").textContent =
+        "Alerts unavailable. Check https://weather.gov";
+    }
+
+    $("status").textContent = "Weather lookup complete.";
+    // Smoothly scroll to the weather results after a successful search
+const weatherResults = document.getElementById("location");
+
+if (weatherResults) {
+  weatherResults.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+    if (lightningMap) { lightningMap.invalidateSize(); lightningMap.setView([place.latitude, place.longitude], 8); }
+   const blitzortungLink = document.querySelector('a[href*="blitzortung.org"]');
+
+if (blitzortungLink) {
+  blitzortungLink.href = `https://maps.blitzortung.org/en/#6/${place.latitude}/${place.longitude}`;
+}
+
+  } catch (error) {
+    $("status").textContent =
+      error.message || "Unable to load weather. Try again.";
+
+    $("alerts").textContent =
+      "Could not check alerts. Please try again.";
+  }
+}
+
+$("search").addEventListener("click", getWeather);
+
+$("city").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    getWeather();
+  
+  }
+});
+  
+function addLightningLocation() {
+  const input = document.getElementById("lightningLocation");
+  const location = input.value.trim();
+
+  if (!location) {
+    alert("Please enter a city or ZIP code.");
+    return;
+  }
+
+  let locations = JSON.parse(
+    localStorage.getItem("thorsLightningLocations") || "[]"
+  );
+
+  if (!locations.includes(location)) {
+    locations.push(location);
+    localStorage.setItem(
+      "thorsLightningLocations",
+      JSON.stringify(locations)
+    );
+  }
+
+  input.value = "";
+  showLightningLocations();
+}
+  document.getElementById("quickSaveLocation").addEventListener("click", function() {
+  const weatherInput = document.getElementById("city");
+  const lightningInput = document.getElementById("lightningLocation");
+
+  if (!weatherInput.value.trim()) {
+    alert("Please enter a city or ZIP code first.");
+    return;
+  }
+
+    lightningInput.value = weatherInput.value.trim();
+  addLightningLocation();
+
+  // Open the saved lightning locations panel
+  const lightningPanel = document.getElementById("lightningPanel");
+
+  if (lightningPanel) {
+    lightningPanel.classList.add("open");
+  }
+});;
+
+function showLightningLocations() {
+  const locations = JSON.parse(
+    localStorage.getItem("thorsLightningLocations") || "[]"
+  );
+
+  const container = document.getElementById("savedLightningLocations");
+  container.innerHTML = "";
+
+  locations.forEach(location => {
+    const item = document.createElement("div");
+
+item.textContent = "📍 " + location + " ";
+item.style.cursor = "pointer";
+item.style.background = "#f0f4f8";
+item.style.color = "#222";
+item.style.border = "1px solid #b8c7d9";
+item.style.borderRadius = "10px";
+item.style.padding = "12px";
+item.style.marginBottom = "10px";
+item.style.display = "block";
+
+    item.onclick = function () { document.getElementById("city").value = location; getWeather(); };
+    const button = document.createElement("button");
+    button.textContent = "Remove";
+
+    button.onclick = function (event) {
+      event.stopPropagation();
+      const updatedLocations = locations.filter(
+        place => place !== location
+      );
+
+      localStorage.setItem(
+        "thorsLightningLocations",
+        JSON.stringify(updatedLocations)
+      );
+
+      showLightningLocations();
+    };
+
+    item.appendChild(button);
+    const lightningStatus = document.createElement("div");
+
+lightningStatus.id = "lightning-status-" + location;
+lightningStatus.textContent = "⚡ Waiting for lightning check...";
+lightningStatus.style.marginTop = "8px";
+lightningStatus.style.fontSize = "14px";
+lightningStatus.style.padding = "6px 0";
+
+item.appendChild(lightningStatus);
+    container.appendChild(item);
+  });
+}
+
+showLightningLocations();
+
+document.getElementById("search").addEventListener("click", function () {
+  const hammer = document.querySelector(".mjolnir-img");
+
+  if (hammer) {
+    hammer.animate(
+      [
+        { transform: "scale(1)", filter: "brightness(1)" },
+        { transform: "scale(3)", filter: "brightness(5)" },
+        { transform: "scale(1.5)", filter: "brightness(1)" },
+        { transform: "scale(3)", filter: "brightness(5)" },
+        { transform: "scale(1)", filter: "brightness(1)" }
+      ],
+      {
+        duration: 1800,
+        easing: "ease-in-out"
+      }
+    );
+  }
+});
+</script>
+
+<section style="padding:12px;text-align:center;background:rgba(10,20,35,0.35);border:1px solid rgba(143,211,255,0.45);border-radius:12px;margin:20px auto;max-width:1000px;box-sizing:border-box;">
+  <h2>⚡ Live U.S. Weather Radar</h2>
+  <a href="https://radar.weather.gov/" target="_blank" rel="noopener noreferrer" style="color:white;background:#2676d9;padding:14px;border-radius:8px;display:inline-block;">Open Live Radar Map</a>
+<iframe
+  id="weatherRadar"
+  src="https://www.rainviewer.com/map.html?loc=35,-100,5&oFa=0&oC=1&oU=0&oCS=1&oF=0&oAP=1&c=3&o=83"
+  width="100%"
+  height="420"
+  style="display:block;box-sizing:border-box;border:2px solid rgba(143,211,255,0.65);border-radius:12px;margin-top:15px;"
+  title="Live U.S. Weather Radar"
+  loading="lazy">
+</iframe>
+</section>
+  <script>lightningMap=L.map('lightningMap').setView([39.5,-98.35],4);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(lightningMap);</script>
+  <script>
+  
+const noaaLightningLayer = L.tileLayer.wms(
+  "https://nowcoast.noaa.gov/geoserver/observations/lightning_detection/ows",
+  {
+    layers: "ldn_lightning_strike_density",
+    format: "image/png",
+    transparent: true,
+    version: "1.3.0",
+    attribution: "Lightning data: NOAA nowCOAST"
+  }
+).addTo(lightningMap);
+
+// Refresh NOAA lightning data every 15 minutes
+setInterval(function() {
+  noaaLightningLayer.setParams({
+    refresh: Date.now()
+  });
+}, 900000);
+</script>
+ 
+ 
+<!-- THOR'S WEATHER PREMIUM LIGHTNING ANIMATION -->
+<div id="thorLightningAnimation" style="display:none;">
+  <video id="thorLightningVideo"
+         width="100%"
+         height="100%"
+         playsinline
+         preload="metadata"
+         style="object-fit:cover;">
+    <source src="thors_weather_slower_hammer_strike_7_5s-1.mp4"
+        type="video/mp4">
+  </video>
+</div>
+<script>
+function playThorLightning() {
+  const container = document.getElementById("thorLightningAnimation");
+  const video = document.getElementById("thorLightningVideo");
+
+  if (!container || !video) {
+    alert("Thor animation elements not found.");
+    return;
+  }
+
+  container.style.display = "block";
+  video.currentTime = 0;
+
+  video.play().catch(error => {
+    alert("Thor video error: " + error.message);
+    container.style.display = "none";
+  });
+  video.onended = function() {
+    container.style.display = "none";
+  };
+}
+  // Close Thor's animation when someone clicks or taps it
+document.getElementById("thorLightningAnimation")
+  ?.addEventListener("click", function() {
+    const video = document.getElementById("thorLightningVideo");
+
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+
+    this.style.display = "none";
+  });
+</script>
+
+
+ <button onclick="playThorLightning()"
+style="display:none;position:fixed;bottom:20px;right:20px;z-index:100000;pointer-events:auto;cursor:pointer;background:#8b2029;color:white;padding:15px;border:2px solid gold;border-radius:10px;font-weight:bold;">
+⚡ Test Thor Animation
+</button>
+
+  <!-- ODIN TEST ANIMATION BUTTON -->
+<!-- ODIN TEST ANIMATION BUTTON -->
+<button onclick="playOdinWarning()"
+  style="display:none;position:fixed;bottom:145px;right:20px;z-index:100000;background:#46334f;color:white;padding:15px;border:2px solid gold;border-radius:10px;cursor:pointer;">
+  🛡️ Test Odin Animation
+<!-- FREYR TEST ANIMATION BUTTON -->
+<button onclick="playFreyrRain()"
+  style="display:none;position:fixed;bottom:205px;right:20px;z-index:100000;background:#245c46;color:white;padding:15px;border:2px solid gold;border-radius:10px;cursor:pointer;">
+  🌧️ Test Freyr Animation
+<!-- NJORD TEST ANIMATION BUTTON -->
+<button onclick="playNjordWind()"
+  style="display:none;position:fixed;bottom:325px;right:20px;z-index:100000;background:#386b75;color:white;padding:15px;border:2px solid silver;border-radius:10px;cursor:pointer;">
+  🌬️ Test Njord Animation
+</button>
+<!-- END NJORD TEST ANIMATION BUTTON -->
+<!-- END NJORD TEST ANIMATION BUTTON -->
+  <!-- SKADI TEST ANIMATION BUTTON -->
+<!-- SKADI TEST ANIMATION BUTTON -->
+<button onclick="playSkadiWinter()"
+  style="display:none;position:fixed;bottom:265px;right:20px;z-index:100000;background:#345b78;color:white;padding:15px;border:2px solid silver;border-radius:10px;cursor:pointer;">
+  ❄️ Test Skadi Animation
+</button>
+  <!-- HUGINN AND MUNINN RAVEN ANIMATION -->
+<div id="ravenAnimation"
+     style="display:none; position:fixed; inset:0;
+            background:#050a19; z-index:99998;">
+
+  <video id="ravenVideo"
+         playsinline
+         style="width:100%; height:100%; object-fit:contain;">
+    <source src="ravens.mp4" type="video/mp4">
+  </video>
+
+  
+</div>
+
+<script>
+function playRavenAnimation() {
+  const overlay = document.getElementById("ravenAnimation");
+  const video = document.getElementById("ravenVideo");
+
+  if (!overlay || !video) return;
+
+  overlay.style.display = "block";
+  video.currentTime = 0;
+
+  video.play().catch(() => {
+    closeRavenAnimation();
+  });
+}
+  // Tap or click to close Huginn and Muninn
+document.getElementById("ravenAnimation")
+  ?.addEventListener("click", function() {
+    const video = document.getElementById("ravenVideo");
+
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+
+    this.style.display = "none";
+  });
+
+function closeRavenAnimation() {
+  const overlay = document.getElementById("ravenAnimation");
+  const video = document.getElementById("ravenVideo");
+
+  if (!overlay || !video) return;
+
+  video.pause();
+  overlay.style.display = "none";
+}
+
+document.getElementById("ravenVideo").onended =
+  closeRavenAnimation;
+  // Thor's Weather - Automatic saved-location monitoring
+async function monitorSavedLightningLocations() {
+  const locations = JSON.parse(
+    localStorage.getItem("thorsLightningLocations") || "[]"
+  );
+
+  let status = document.getElementById(
+    "lightningMonitorStatus"
+  );
+
+  if (!status) {
+    status = document.createElement("div");
+    status.id = "lightningMonitorStatus";
+
+    const container = document.getElementById(
+      "savedLightningLocations"
+    );
+
+    if (!container) return;
+    container.after(status);
+  }
+
+ status.textContent =
+  "⚡ Lightning monitor started — checking " +
+  locations.length + " location(s)...";
+
+console.log("Thor's Weather lightning monitor started");
+
+  if (locations.length === 0) {
+    status.textContent =
+      "⚡ No saved lightning locations.";
+    return;
+  }
+
+  const results = [];
+
+  for (const location of locations) {
+    try {
+      let place;
+
+if (/^\d{5}$/.test(location)) {
+  // Look up a U.S. ZIP code
+  const response = await fetch(
+    "https://api.zippopotam.us/us/" +
+    encodeURIComponent(location)
+  );
+
+  if (!response.ok) {
+    throw new Error("ZIP code lookup failed");
+  }
+
+  const data = await response.json();
+  const zipPlace = data.places?.[0];
+
+  if (zipPlace) {
+    place = {
+      latitude: Number(zipPlace.latitude),
+      longitude: Number(zipPlace.longitude)
+    };
+  }
+} else {
+  // Look up a city name
+  const response = await fetch(
+    "https://geocoding-api.open-meteo.com/v1/search?name=" +
+    encodeURIComponent(location) +
+    "&count=10&language=en&format=json"
+  );
+
+  if (!response.ok) {
+    throw new Error("City lookup failed");
+  }
+
+  const data = await response.json();
+
+  place = (data.results || []).find(
+    p => p.country_code === "US"
+  );
+}
+
+      if (!place) {
+        results.push("📍 " + location + ": Location not found");
+        continue;
+      }
+const currentStatus = document.getElementById(
+  "lightning-status-" + location
+);
+
+if (currentStatus) {
+  currentStatus.textContent =
+    "🔄 Checking lightning data for " + location + "...";
+}
+      const detected = await checkSavedLocationLightning(
+        place.latitude,
+        place.longitude
+      );
+
+      results.push(
+        (detected ? "⚡ " : "📍 ") +
+        location +
+        (detected
+          ? ": Possible lightning activity detected"
+          : ": No lightning detected in sampled data")
+      );
+    } catch (error) {
+      console.warn(
+        "Saved lightning check failed:",
+        location,
+        error
+      );
+      results.push(
+        "⚠️ " + location + ": Lightning check unavailable"
+      );
+    }
+  }
+
+  results.forEach(result => {
+  const location = result.match(/^\S+\s+([^:]+):/)?.[1];
+
+  if (!location) return;
+
+  const lightningStatus = document.getElementById(
+    "lightning-status-" + location
+  );
+
+  if (lightningStatus) {
+    lightningStatus.textContent = result;
+  }
+});
+
+status.textContent = "";
+  // Update the Lightning Locations button
+const panelButton = document.getElementById(
+  "lightningPanelButton"
+);
+
+if (panelButton) {
+  const lightningAlert = results.some(result =>
+    result.includes("Possible lightning activity detected")
+  );
+
+  if (lightningAlert) {
+    panelButton.style.background = "#b91c1c";
+    panelButton.textContent = "⚡ Lightning Alert!";
+  } else {
+    panelButton.style.background = "#243b55";
+    panelButton.textContent = "⚡ My Lightning Locations";
+  }
+}
+}
+// Check NOAA lightning for a saved location
+async function checkSavedLocationLightning(lat, lon) {
+  const url = new URL(
+    "https://nowcoast.noaa.gov/geoserver/observations/lightning_detection/ows"
+  );
+
+  const offset = 10 / 69;
+  const longitudeOffset =
+    offset / Math.max(Math.cos(lat * Math.PI / 180), 0.01);
+
+  const options = {
+    SERVICE: "WMS",
+    VERSION: "1.3.0",
+    REQUEST: "GetFeatureInfo",
+    LAYERS: "ldn_lightning_strike_density",
+    QUERY_LAYERS: "ldn_lightning_strike_density",
+    CRS: "CRS:84",
+    BBOX: `${lon - longitudeOffset},${lat - offset},${lon + longitudeOffset},${lat + offset}`,
+    WIDTH: "201",
+    HEIGHT: "201",
+    I: "100",
+    J: "100",
+    INFO_FORMAT: "application/json"
+  };
+
+  Object.entries(options).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
+
+  const samplePoints = [
+    [100, 100],
+    [50, 100],
+    [150, 100],
+    [100, 50],
+    [100, 150],
+    [65, 65],
+    [135, 65],
+    [65, 135],
+    [135, 135]
+  ];
+
+  for (const [i, j] of samplePoints) {
+    url.searchParams.set("I", i);
+    url.searchParams.set("J", j);
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("NOAA lightning request failed");
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data.features) || data.features.length === 0) {
+      throw new Error("NOAA returned no lightning density features");
+    }
+
+    const rawDensity = data.features[0]?.properties?.Band1;
+
+    if (
+      rawDensity === null ||
+      rawDensity === undefined ||
+      rawDensity === ""
+    ) {
+      throw new Error("NOAA lightning density data unavailable");
+    }
+
+    const density = Number(rawDensity);
+
+    if (!Number.isFinite(density)) {
+      throw new Error("NOAA returned invalid lightning density");
+    }
+
+    if (density > 0) {
+      return true;
+    }
+  }
+
+  return false;
+}
+// Check saved locations every 15 minutes
+monitorSavedLightningLocations();
+
+window.thorsSavedLocationsTimer = setInterval(
+  monitorSavedLightningLocations,
+  900000
+);
+</script>
+  <!-- ODIN THE ALL-FATHER ANIMATION CONTROL -->
+<script>
+function playOdinWarning() {
+  const overlay = document.getElementById("odinWarningOverlay");
+  const video = document.getElementById("odinWarningVideo");
+
+  if (!overlay || !video) return;
+
+  overlay.style.display = "flex";
+
+  video.currentTime = 0;
+
+  const playPromise = video.play();
+
+    if (playPromise !== undefined) {
+    playPromise.catch(error => {
+      console.warn("Odin video playback unavailable:", error);
+      closeOdinWarning();
+    });
+  }
+
+  video.onended = function() {
+    closeOdinWarning();
+  };
+}
+  function closeOdinWarning() {
+  const overlay = document.getElementById("odinWarningOverlay");
+  const video = document.getElementById("odinWarningVideo");
+
+  if (video) {
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  if (overlay) {
+    overlay.style.display = "none";
+  }
+}
+</script>
+<!-- END ODIN ANIMATION CONTROL -->
+  <!-- FREYR RAIN ANIMATION CONTROL -->
+<script>
+function playFreyrRain() {
+  const overlay = document.getElementById("freyrRainOverlay");
+  const video = document.getElementById("freyrRainVideo");
+
+  if (!overlay || !video) return;
+
+  overlay.style.display = "block";
+  video.currentTime = 0;
+
+  video.play().catch(error => {
+    console.warn("Freyr video playback unavailable:", error);
+     closeFreyrRain();
+  });
+
+  video.onended = function() {
+    closeFreyrRain();
+  };
+}
+
+function closeFreyrRain() {
+  const overlay = document.getElementById("freyrRainOverlay");
+  const video = document.getElementById("freyrRainVideo");
+
+  if (video) {
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  if (overlay) {
+    overlay.style.display = "none";
+  }
+}
+</script>
+<!-- END FREYR RAIN ANIMATION CONTROL -->
+ <!-- SKADI WINTER ANIMATION CONTROL -->
+<script>
+function playSkadiWinter() {
+  const overlay = document.getElementById("skadiWinterOverlay");
+  const video = document.getElementById("skadiWinterVideo");
+
+  if (!overlay || !video) return;
+
+  overlay.style.display = "block";
+  video.currentTime = 0;
+
+  video.play().catch(error => {
+    console.warn("Skadi video playback unavailable:", error);
+      closeSkadiWinter();
+  });
+
+  video.onended = function() {
+    closeSkadiWinter();
+  };
+}
+
+function closeSkadiWinter() {
+  const overlay = document.getElementById("skadiWinterOverlay");
+  const video = document.getElementById("skadiWinterVideo");
+
+  if (video) {
+    video.pause();
+    video.currentTime = 0;
+  }
+
+  if (overlay) {
+    overlay.style.display = "none";
+  }
+}
+</script>
+<!-- END SKADI WINTER ANIMATION CONTROL -->
+
+<!-- AUTOMATICALLY CLOSE SKADI VIDEO -->
+<script>
+document.getElementById("skadiWinterVideo").addEventListener("ended", function() {
+  closeSkadiWinter();
+});
+</script>
+
+<!-- NJORD WIND ANIMATION CONTROL -->
+<script>
+function playNjordWind() {
+  const overlay = document.getElementById("njordWindOverlay");
+  const video = document.getElementById("njordWindVideo");
+
+  if (!overlay || !video) return;
+
+  overlay.style.display = "block";
+  video.currentTime = 0;
+
+  video.play().catch(error => {
+    console.warn("Njord video playback unavailable:", error);
+    closeNjordWind();
+  });
+}
+
+  // Automatically close Njord when his video finishes
+document.getElementById("njordWindVideo").addEventListener("ended", function() {
+  closeNjordWind();
+});
+</script>
+  <script>
+function openLightningFullscreen() {
+  const overlay = document.getElementById("lightningFullscreen");
+
+  if (!overlay) return;
+
+  overlay.style.display = "block";
+
+  setTimeout(function() {
+    if (typeof lightningMap !== "undefined" && lightningMap) {
+      lightningMap.invalidateSize();
+    }
+  }, 150);
+}
+
+function closeLightningFullscreen() {
+  const overlay = document.getElementById("lightningFullscreen");
+
+  if (overlay) {
+  
+  overlay.style.display = "none";
+  }
+}
+</script>
+<footer style="text-align:center;padding:20px 12px;background:rgba(10,20,35,0.50);color:white;font-size:12px;border-top:1px solid rgba(143,211,255,0.25);">
+
+  <a href="legal.html" style="
+    display:inline-block;
+    padding:12px 24px;
+    margin-bottom:15px;
+    background:#1d2b40;
+    color:white;
+    border:1px solid #8fd3ff;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:bold;
+  ">
+    ⚖️ Legal Information
+  </a>
+
+  <div>
+  © 2026 Weather Wielders of Asgard. All Rights Reserved.
+  </div>
+
+</footer>
+  
+<!-- ASGARD BETA LOGIN -->
+<section id="asgardBetaLogin" style="
+  max-width:500px;
+  margin:25px auto;
+  padding:20px;
+  background:rgba(10,20,35,0.9);
+  border:1px solid #8fd3ff;
+  border-radius:12px;
+  color:white;
+  text-align:center;
+">
+  <h2>⚡ Asgard Beta Login</h2>
+  <p>Invited beta testers can sign in here.</p>
+
+  <input
+    id="asgardBetaEmail"
+    type="email"
+    placeholder="Enter your invitation email"
+    autocomplete="email"
+    style="padding:12px;width:90%;max-width:350px;"
+  >
+
+  <button
+    type="button"
+    id="asgardBetaLoginButton"
+    style="padding:12px 20px;margin-top:12px;cursor:pointer;"
+  >
+    Send Login Link
+  </button>
+
+  <p id="asgardBetaLoginMessage" aria-live="polite"></p>
+</section>
+<!-- ASGARD MEMBERSHIP STATUS DISPLAY -->
+<p id="asgardMembershipStatus" aria-live="polite">
+  ⚡ Checking Asgard membership...
+</p>
+<!-- END ASGARD MEMBERSHIP STATUS DISPLAY -->
+
+
+
+ 
+
+<!-- SUPABASE CONNECTION - WEATHER WIELDERS OF ASGARD -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script>
+  const asgardSupabase = window.supabase.createClient(
+    "https://mwcieyqjyqsvuuruxetx.supabase.co",
+    "sb_publishable_UPYdxjrwu8QlkuZFNCFMFg_BeL6NUeW"
+  );
+</script>
+  
+<!-- ASGARD BETA LOGIN CONTROL -->
+<script>
+document.getElementById("asgardBetaLoginButton").addEventListener("click", async function () {
+  const email = document.getElementById("asgardBetaEmail").value.trim();
+  const message = document.getElementById("asgardBetaLoginMessage");
+
+  if (!email) {
+    message.textContent = "Please enter your invitation email.";
+    return;
+  }
+
+  message.textContent = "Requesting your login link...";
+
+  try {
+    const { error } = await asgardSupabase.auth.signInWithOtp({
+      email: email,
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: "https://thors-weather.vercel.app/index.html"
+      }
+    });
+
+    if (error) throw error;
+
+    message.textContent = "If your email is eligible, check your inbox for a login link.";
+  } catch (error) {
+    console.error("Asgard beta login error:", error);
+    message.textContent = "Unable to send a login link right now. Please try again later.";
+  }
+});
+</script>
+  <!-- ASGARD LOGIN STATUS CHECK -->
+<script>
+async function checkAsgardLoginStatus() {
+  const status = document.getElementById("asgardLoginStatus");
+
+  if (!status) return;
+
+  try {
+    const { data, error } = await asgardSupabase.auth.getUser();
+
+    if (error || !data.user) {
+      status.textContent = "🔒 Not Signed In";
+    } else {
+      status.textContent = "🔓 Signed In";
+    }
+  } catch (error) {
+    status.textContent = "⚠️ Unable to verify login";
+  }
+}
+
+checkAsgardLoginStatus();
+
+asgardSupabase.auth.onAuthStateChange(() => {
+  setTimeout(checkAsgardLoginStatus, 0);
+});
+</script>
+<!-- END ASGARD LOGIN STATUS CHECK -->
+  
+
+<!-- ASGARD MEMBERSHIP ACCESS CHECK -->
+<script>
+async function checkAsgardMembership() {
+  const status = document.getElementById("asgardMembershipStatus");
+
+  if (!status) return;
+
+  status.textContent = "⚡ Checking Asgard membership...";
+
+  try {
+    const { data: userData, error: userError } =
+      await asgardSupabase.auth.getUser();
+
+    if (userError || !userData.user) {
+      status.textContent = "🔒 Sign in to check membership";
+      return;
+    }
+
+    const { data, error } =
+      await asgardSupabase.rpc("get_asgard_access");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      status.textContent = "🔒 No active beta membership";
+    } else if (data[0].member_role === "owner") {
+      status.textContent = "👑 Asgard Owner — Permanent Access";
+    } else {
+      status.textContent = "⚡ Asgard Beta Tester — Active";
+    }
+  } catch (error) {
+    console.error("Asgard membership check:", error);
+    status.textContent = "⚠️ Unable to verify membership";
+  }
+}
+
+checkAsgardMembership();
+
+asgardSupabase.auth.onAuthStateChange(() => {
+  setTimeout(checkAsgardMembership, 0);
+});
+</script>
+<!-- END ASGARD MEMBERSHIP ACCESS CHECK -->
+  <!-- END ASGARD BETA LOGIN CONTROL -->
+<!-- END SUPABASE CONNECTION -->
+<!-- THOR'S ROAD WATCH - MAP INITIALIZATION -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const mapElement = document.getElementById("roadWatchMap");
+
+  if (!mapElement || typeof L === "undefined") return;
+
+  const roadWatchMap = L.map("roadWatchMap").setView(
+    [39.5, -98.35],
+    4
+  );
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors"
+    }
+  ).addTo(roadWatchMap);
+
+  window.roadWatchMap = roadWatchMap;
+  // THOR'S ROAD WATCH - DRIVING ROUTE
+let roadWatchRouteLine = null;
+  // THOR'S ROAD WATCH - LIVE GPS TRACKING
+let roadWatchMarker = null;
+let roadWatchTrackingId = null;
+
+const gpsButton = document.getElementById("roadWatchGpsButton");
+const gpsStatus = document.getElementById("roadWatchStatus");
+const planRouteButton = document.getElementById("roadWatchPlanRouteButton");
+const destinationInput = document.getElementById("roadWatchDestination");
+gpsButton.addEventListener("click", function() {
+  if (roadWatchTrackingId !== null) {
+    navigator.geolocation.clearWatch(roadWatchTrackingId);
+    roadWatchTrackingId = null;
+    gpsButton.textContent = "📍 Start Live GPS Tracking";
+    gpsStatus.textContent = "GPS tracking stopped.";
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    gpsStatus.textContent = "GPS is not supported on this device.";
+    return;
+  }
+
+  gpsStatus.textContent = "Waiting for GPS location...";
+
+  roadWatchTrackingId = navigator.geolocation.watchPosition(
+    function(position) {
+      const lat = position.coords.latitude;
+    
+      const lon = position.coords.longitude;
+        window.roadWatchCurrentLocation = {
+  lat: lat,
+  lon: lon
+};
+
+      if (!roadWatchMarker) {
+        roadWatchMarker = L.circleMarker([lat, lon], {
+  radius: 10,
+  color: "#ffffff",
+  weight: 3,
+  fillColor: "#ff0000",
+  fillOpacity: 1
+}).addTo(roadWatchMap);
+      } else {
+        roadWatchMarker.setLatLng([lat, lon]);
+      }
+
+      roadWatchMap.setView([lat, lon], 15);
+
+      gpsStatus.textContent = "📍 Live GPS tracking active.";
+      gpsButton.textContent = "⏹ Stop Live GPS Tracking";
+    },
+    function(error) {
+      gpsStatus.textContent = "GPS unavailable: " + error.message;
+
+      if (roadWatchTrackingId !== null) {
+        navigator.geolocation.clearWatch(roadWatchTrackingId);
+        roadWatchTrackingId = null;
+      }
+
+      gpsButton.textContent = "📍 Start Live GPS Tracking";
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 15000
+    }
+  );
+});
+// END THOR'S ROAD WATCH - LIVE GPS TRACKING
+// THOR'S ROAD WATCH - JOURNEY PLANNER BUTTON
+if (planRouteButton && destinationInput) {
+  planRouteButton.addEventListener("click", async function() {
+    const destination = destinationInput.value.trim();
+
+    if (!destination) {
+      alert("Please enter a destination city or ZIP code.");
+      return;
+    }
+
+    if (!window.roadWatchCurrentLocation) {
+      alert("Waiting for your GPS location. Please enable GPS tracking.");
+      return;
+    }
+    
+// THOR'S ROAD WATCH - ROUTE CALCULATION GOES HERE
+    const destinationSearchUrl =
+  "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+  encodeURIComponent(destination);
+  const destinationResponse = await fetch(destinationSearchUrl);
+const destinationResults = await destinationResponse.json();  
+ if (!destinationResults.length) {
+  alert("Thor could not find that destination. Please check the city or ZIP code.");
+  return;
+}   
+    const destinationLat = Number(destinationResults[0].lat);
+const destinationLon = Number(destinationResults[0].lon);
+    const startLat = window.roadwatchCurrentLocation.lat;
+const startLon = window.roadwatchCurrentLocation.lon;
+    const routeUrl =
+  "https://router.project-osrm.org/route/v1/driving/" +
+  startLon + "," + startLat + ";" +
+  destinationLon + "," + destinationLat +
+  "?overview=full&geometries=geojson";
+    const routeResponse = await fetch(routeUrl);
+const routeData = await routeResponse.json();
+    if (!routeResponse.ok || !routeData.routes || !routeData.routes.length) {
+  alert("Thor could not calculate a driving route to that destination.");
+  return;
+}
+    // Remove the previous driving route, if one exists
+if (roadWatchRouteLine) {
+  roadwatchMap.removeLayer(roadWatchRouteLine);
+}
+
+// Draw the new driving route in blue
+roadWatchRouteLine = L.geoJSON(routeData.routes[0].geometry, {
+  style: {
+    color: "#0088ff",
+    weight: 5,
+    opacity: 0.9
+  }
+}).addTo(roadwatchMap);
+  // Show the entire driving route on the map
+roadwatchMap.fitBounds(roadwatchRouteLine.getBounds(), {
+  padding: [30, 30]
+});  
+  });
+}
+});
+</script>
+<!-- END THOR'S ROAD WATCH MAP INITIALIZATION -->
+  <!-- THOR'S ROAD WATCH - EXPAND AND COLLAPSE -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const toggle = document.getElementById("roadWatchToggle");
+  const content = document.getElementById("roadWatchContent");
+
+  if (!toggle || !content) return;
+
+  toggle.addEventListener("click", function() {
+    const isOpening = content.style.display === "none";
+
+    content.style.display = isOpening ? "block" : "none";
+    toggle.setAttribute("aria-expanded", String(isOpening));
+
+    toggle.textContent = isOpening
+      ? "⚡ Close Thor's Road Watch"
+      : "⚡ Open Thor's Road Watch";
+// Automatically start GPS when Road Watch opens
+if (isOpening) {
+  const gpsButton = document.getElementById("roadWatchGpsButton");
+
+if (gpsButton && gpsButton.textContent.includes("Start Live GPS Tracking")) {
+    gpsButton.click();
+  }
+}
+    if (isOpening && window.roadWatchMap) {
+      setTimeout(function() {
+        window.roadWatchMap.invalidateSize();
+      }, 100);
+    }
+  });
+});
+</script>
+<!-- END THOR'S ROAD WATCH - EXPAND AND COLLAPSE -->
+</body>
+</html>
+ 
+ (!place) {
       throw new Error("Location not found. Try another city or ZIP code.");
     }
 
