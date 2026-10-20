@@ -1443,10 +1443,8 @@ if (currentStatus) {
     }
   }
 
-  results.forEach(result => {
-  const location = result.match(/^\S+\s+([^:]+):/)?.[1];
-
-  if (!location) return;
+results.forEach((result, index) => {
+  const location = locations[index];
 
   const lightningStatus = document.getElementById(
     "lightning-status-" + location
@@ -1456,7 +1454,6 @@ if (currentStatus) {
     lightningStatus.textContent = result;
   }
 });
-
 status.textContent = "";
   // Update the Lightning Locations button
 const panelButton = document.getElementById(
