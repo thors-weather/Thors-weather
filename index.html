@@ -898,16 +898,10 @@ if (
   playRavenAnimation();
 }
  
-        "https://api.weather.gov/alerts/active?point=" +
-        place.latitude + "," + place.longitude,
-        {
-          headers: {
-            Accept: "application/geo+json"
-          }
-        }
-      );
+       
+        
 
-      if (!response.ok) {
+     
         throw new Error("Alert request failed.");
       }
 
