@@ -897,35 +897,7 @@ if (
   sessionStorage.setItem("ravensWatchPlayed", "true");
   playRavenAnimation();
 }
- 
-       
-        
 
-     
-        throw new Error("Alert request failed.");
-      }
-
-      const result = await response.json();
-      const features = result.features || [];
-      // THOR'S WEATHER — THUNDERSTORM WARNING ANIMATION
-const thorThunderstormWarning = features.some(feature =>
-  (feature.properties?.event || "").toLowerCase().includes("thunderstorm warning")
-);
-
-  // HUGINN AND MUNINN — SEVERE THUNDERSTORM WATCH
-const ravenThunderstormWatch = features.some(feature =>
-  (feature.properties?.event || "").toLowerCase() ===
-  "severe thunderstorm watch"
-);
-
-if (
-  ravenThunderstormWatch &&
-  !thorThunderstormWarning &&
-  !sessionStorage.getItem("ravensWatchPlayed")
-) {
-  sessionStorage.setItem("ravensWatchPlayed", "true");
-  playRavenAnimation();
-}
  
 // ODIN THE ALL-FATHER: TORNADO AND HURRICANE WARNINGS
 
