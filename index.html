@@ -318,6 +318,14 @@ input {
   <h2>⚡ 5-Day Weather Forecast</h2>
   <div id="forecast">Search for a location to see the forecast.</div>
 </div>
+  <!-- ASGARD HOURLY WEATHER FORECAST -->
+<div class="card" style="background:rgba(10,20,35,0.50);border:1px solid rgba(143,211,255,0.25);">
+  <h2>🕒 Hourly Weather Forecast</h2>
+  <div id="hourlyForecast" style="display:flex;gap:12px;overflow-x:auto;padding:12px 0;">
+    Search for a location to see the hourly forecast.
+  </div>
+</div>
+<!-- END ASGARD HOURLY WEATHER FORECAST -->
   <div class="card">
     <h2 style="display:none;">⚠️ Official Weather Alerts</h2>
    <div id="alertDetails" style="display:none;position:fixed;inset:0;background:#101820;color:white;z-index:9999;overflow-y:auto;padding:20px;">
@@ -721,7 +729,8 @@ document.getElementById("weatherRadar").src = "https://www.rainviewer.com/map.ht
         "wind_speed_10m,relative_humidity_2m",
       temperature_unit: "fahrenheit",
       wind_speed_unit: "mph",
-      timezone: "auto",
+            timezone: "auto",
+      hourly: "temperature_2m,weather_code,precipitation_probability",
       daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
       forecast_days: 5
     });
@@ -801,10 +810,95 @@ item.style.padding = "12px";
 item.style.marginBottom = "10px";
 item.style.display = "block";
   item.textContent = `${day}: ${condition} | High ${high}°F | Low ${low}°F | Rain ${rain}%`;
-  forecast.appendChild(item);
+    forecast.appendChild(item);
 }
-    try {
+
+// ASGARD HOURLY WEATHER FORECAST
+const hourlyContainer = document.getElementById("hourlyForecast");
+const hours = data.hourly;
+
+if (hourlyContainer && hours && hours.time) {
+  hourlyContainer.replaceChildren();
+
+  const now = new Date();
+  let displayedHours = 0;
+
+  for (let i = 0; i < hours.time.length; i++) {
+    const hourDate = new Date(hours.time[i]);
+
+    if (hourDate < now) continue;
+    if (displayedHours >= 24) break;
+
+    const time = hourDate.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+
+    const temperature = Math.round(hours.temperature_2m[i]);
+    const condition =
+      descriptions[hours.weather_code[i]] || "Weather";
+    const rain = hours.precipitation_probability[i] ?? 0;
+
+    const item = document.createElement("div");
+
+    item.style.background = "#f0f4f8";
+    item.style.color = "#222";
+    item.style.border = "1px solid #b8c7d9";
+    item.style.borderRadius = "10px";
+    item.style.padding = "12px";
+    item.style.minWidth = "130px";
+    item.style.flexShrink = "0";
+    item.style.textAlign = "center";
+
+    item.textContent =
+      `${time}\n${temperature}°F\n${condition}\nRain ${rain}%`;
+
+    item.style.whiteSpace = "pre-line";
+
+    hourlyContainer.appendChild(item);
+    displayedHours++;
+ displayedHours++;
+  }
+}
+// END ASGARD HOURLY WEATHER FORECAST {
+    // END ASGARD HOURLY WEATHER FORECAST
+try {
       const response = await fetch(
+        "https://api.weather.gov/alerts/active?point=" +
+        place.latitude + "," + place.longitude,
+        {
+          headers: {
+            Accept: "application/geo+json"
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Alert request failed.");
+      }
+
+      const result = await response.json();
+      const features = result.features || [];
+      // THOR'S WEATHER — THUNDERSTORM WARNING ANIMATION
+const thorThunderstormWarning = features.some(feature =>
+  (feature.properties?.event || "").toLowerCase().includes("thunderstorm warning")
+);
+
+  // HUGINN AND MUNINN — SEVERE THUNDERSTORM WATCH
+const ravenThunderstormWatch = features.some(feature =>
+  (feature.properties?.event || "").toLowerCase() ===
+  "severe thunderstorm watch"
+);
+
+if (
+  ravenThunderstormWatch &&
+  !thorThunderstormWarning &&
+  !sessionStorage.getItem("ravensWatchPlayed")
+) {
+  sessionStorage.setItem("ravensWatchPlayed", "true");
+  playRavenAnimation();
+}
+ 
         "https://api.weather.gov/alerts/active?point=" +
         place.latitude + "," + place.longitude,
         {
