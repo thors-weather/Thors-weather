@@ -1944,8 +1944,8 @@ const destinationResults = await destinationResponse.json();
 }   
     const destinationLat = Number(destinationResults[0].lat);
 const destinationLon = Number(destinationResults[0].lon);
-    const startLat = window.roadwatchCurrentLocation.lat;
-const startLon = window.roadwatchCurrentLocation.lon;
+    const startLat = window.roadWatchCurrentLocation.lat;
+const startLon = window.roadWatchCurrentLocation.lon;
     const routeUrl =
   "https://router.project-osrm.org/route/v1/driving/" +
   startLon + "," + startLat + ";" +
@@ -1957,9 +1957,9 @@ const routeData = await routeResponse.json();
   alert("Thor could not calculate a driving route to that destination.");
   return;
 }
-    // Remove the previous driving route, if one exists
+ // Remove the previous driving route, if one exists
 if (roadWatchRouteLine) {
-  roadwatchMap.removeLayer(roadWatchRouteLine);
+  roadWatchMap.removeLayer(roadWatchRouteLine);
 }
 
 // Draw the new driving route in blue
@@ -1969,11 +1969,12 @@ roadWatchRouteLine = L.geoJSON(routeData.routes[0].geometry, {
     weight: 5,
     opacity: 0.9
   }
-}).addTo(roadwatchMap);
-  // Show the entire driving route on the map
-roadwatchMap.fitBounds(roadwatchRouteLine.getBounds(), {
+}).addTo(roadWatchMap);
+
+// Show the entire driving route on the map
+roadWatchMap.fitBounds(roadWatchRouteLine.getBounds(), {
   padding: [30, 30]
-});  
+});
   });
 }
 });
