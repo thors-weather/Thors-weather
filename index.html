@@ -249,10 +249,11 @@ input {
     <h2 style="text-align:center;">Find Your Weather</h2>
     <div style="display:flex; align-items:center; width:240px; max-width:100%; margin:0 auto; border:1px solid #8fd3ff; border-radius:8px; overflow:hidden; background:white;">
   <input id="city" placeholder="City or ZIP" onkeydown="if(event.key === 'Enter') { event.preventDefault(); document.getElementById('search').click(); }" style="width:100%; min-width:0; flex:1; border:none; padding:10px 8px; box-sizing:border-box;">
-  <button type="button" id="quickSaveLocation" style="flex-shrink:0; padding:10px 8px; border:none; border-left:1px solid #ccc; border-radius:0; background:#eaf4ff; color:#173451; font-size:12px; cursor:pointer;">⚡ Save</button>
-</div>
+ <button type="button" id="quickSaveLocation" style="flex-shrink:0; padding:10px 8px; border:none; border-left:1px solid #ccc; border-radius:0; background:#eaf4ff; color:#173451; font-size:12px; cursor:pointer;">⚡ Save</button>
+ <button type="button" id="saveHomeWeather" style="flex-shrink:0; padding:10px 8px; border:none; border-left:1px solid #ccc; border-radius:0; background:#eaf4ff; color:#173451; font-size:12px; cursor:pointer;">🏠 Home</button></div>
     <button id="search" style="display:block; width:280px; max-width:100%; margin:10px auto; box-sizing:border-box; padding:12px 8px;"><img src="a_clean_high_detail_fantasy_styled_icon_illustra.png" class="mjolnir-img" alt=""> Get My Weather</button>
- <details id="betaNotice" style="max-width:600px; margin:12px auto; padding:12px; background:rgba(10,20,35,0.85); color:white; border:1px solid #8fd3ff; border-radius:10px; text-align:center; font-size:13px; line-height:1.5;">
+
+   <details id="betaNotice" style="max-width:600px; margin:12px auto; padding:12px; background:rgba(10,20,35,0.85); color:white; border:1px solid #8fd3ff; border-radius:10px; text-align:center; font-size:13px; line-height:1.5;">
  <summary style="cursor:pointer; font-weight:bold; padding:4px;">
   ⚡ Weather Wielders of Asgard — Public Beta
 </summary>
@@ -468,7 +469,8 @@ const descriptions = {
   99: "Thunderstorm with heavy hail"
 };
 let lightningMap;
-async function getWeather() {
+async function getWeather(autoLoad = false) {
+  autoLoad = autoLoad === true;
   const city = $("city").value.trim();
 
   if (!city) {
@@ -880,7 +882,7 @@ $("alertBanner").style.display = features.length ? "block" : "none"; $("alertBan
     // Smoothly scroll to the weather results after a successful search
 const weatherResults = document.getElementById("location");
 
-if (weatherResults) {
+if (weatherResults && !autoLoad) {
   weatherResults.scrollIntoView({
     behavior: "smooth",
     block: "start"
@@ -901,8 +903,43 @@ if (blitzortungLink) {
       "Could not check alerts. Please try again.";
   }
 }
+// ASGARD HOME WEATHER STORAGE
+function getHomeWeatherLocation() {
+  return localStorage.getItem("asgardHomeWeather") || "";
+}
 
-$("search").addEventListener("click", getWeather);
+function saveHomeWeatherLocation(location) {
+  localStorage.setItem("asgardHomeWeather", location);
+}
+// END ASGARD HOME WEATHER STORAGE
+  // ASGARD AUTOMATIC HOME WEATHER LOADING
+function loadHomeWeatherOnVisit() {
+  const homeLocation = getHomeWeatherLocation();
+
+  if (!homeLocation) return;
+
+  document.getElementById("city").value = homeLocation;
+  getWeather(true);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", loadHomeWeatherOnVisit);
+} else {
+  loadHomeWeatherOnVisit();
+}
+// END ASGARD AUTOMATIC HOME WEATHER LOADING
+$("search").addEventListener("click", () => getWeather(false));
+  document.getElementById("saveHomeWeather").addEventListener("click", function() {
+  const location = document.getElementById("city").value.trim();
+
+  if (!location) {
+    alert("Please enter a city or ZIP code first.");
+    return;
+  }
+
+  saveHomeWeatherLocation(location);
+  alert("🏠 Home weather location saved: " + location);
+});
 
 $("city").addEventListener("keydown", event => {
   if (event.key === "Enter") {
