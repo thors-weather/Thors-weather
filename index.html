@@ -1991,6 +1991,16 @@ roadWatchRouteLine = L.geoJSON(routeData.routes[0].geometry, {
 roadWatchMap.fitBounds(roadWatchRouteLine.getBounds(), {
   padding: [30, 30]
 });
+    // THOR'S ROAD WATCH - SHOW ROUTE WEATHER PANEL
+const weatherPanel = document.getElementById("roadWatchWeather");
+const weatherResults = document.getElementById("roadWatchWeatherResults");
+
+if (weatherPanel && weatherResults) {
+  weatherResults.textContent =
+    "⚡ Thor is preparing weather forecasts along your journey.";
+  weatherPanel.style.display = "block";
+}
+// END ROUTE WEATHER PANEL
   });
 }
 });
