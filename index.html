@@ -386,14 +386,24 @@ input {
 </button>
 <!-- END THOR'S CHARIOT TOGGLE BUTTON -->
     <!-- ROAD WATCH EXPANDABLE CONTENT -->
-  <div id="roadWatchContent" style="display:none;">
+  <div id="roadWatchContent"
+  style="display:none;position:fixed;inset:0;width:100%;height:100dvh;overflow-y:auto;box-sizing:border-box;z-index:9999;background:rgba(8,20,40,0.97);padding:16px;border:2px solid #d9b65f;color:white;">
+    <!-- THOR'S ROAD WATCH FULLSCREEN CLOSE BUTTON -->
+<button
+  type="button"
+  id="roadWatchCloseButton"
+  style="display:block;width:auto;margin:10px 10px 15px auto;padding:12px 20px;background:#243b55;color:#ffd76a;border:1px solid #ffd76a;border-radius:10px;cursor:pointer;font-weight:bold;"
+>
+  ✕ Close Road Watch
+</button>
+<!-- END ROAD WATCH FULLSCREEN CLOSE BUTTON -->
 
   <p style="text-align:center;">
     Track your location and watch for weather along your journey.
   </p>
 
-  <div id="roadWatchMap"
-    style="width:100%;height:350px;border-radius:12px;">
+<div id="roadWatchMap"
+  style="width:100%;height:65dvh;min-height:300px;border:2px solid #d9b65f;border-radius:12px;box-sizing:border-box;">
   </div>
 <!-- THOR'S ROAD WATCH - GPS BUTTON -->
 <button
@@ -1975,10 +1985,16 @@ document.addEventListener("DOMContentLoaded", function() {
   const toggle = document.getElementById("roadWatchToggle");
   const content = document.getElementById("roadWatchContent");
 
-  if (!toggle || !content) return;
+   if (!toggle || !content) return;
 
   toggle.addEventListener("click", function() {
     const isOpening = content.style.display === "none";
+
+    if (isOpening && window.roadWatchMap) {
+      setTimeout(function() {
+        window.roadWatchMap.invalidateSize();
+      }, 300);
+    }
 
     content.style.display = isOpening ? "block" : "none";
     toggle.setAttribute("aria-expanded", String(isOpening));
@@ -1994,12 +2010,17 @@ if (gpsButton && gpsButton.textContent.includes("Start Live GPS Tracking")) {
     gpsButton.click();
   }
 }
-    if (isOpening && window.roadWatchMap) {
-      setTimeout(function() {
-        window.roadWatchMap.invalidateSize();
-      }, 100);
-    }
   });
+      // Close Thor's Road Watch using the fullscreen Close button
+  const closeButton = document.getElementById("roadWatchCloseButton");
+
+  if (closeButton) {
+    closeButton.addEventListener("click", function() {
+      content.style.display = "none";
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.textContent = "⚡ Open Thor's Road Watch";
+    });
+  }
 });
 </script>
 <!-- END THOR'S ROAD WATCH - EXPAND AND COLLAPSE -->
