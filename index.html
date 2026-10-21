@@ -1910,7 +1910,9 @@ gpsButton.addEventListener("click", function() {
         roadWatchMarker.setLatLng([lat, lon]);
       }
 
-      roadWatchMap.setView([lat, lon], 15);
+      if (!roadWatchRouteLine) {
+  roadWatchMap.setView([lat, lon], 15);
+}
 
       gpsStatus.textContent = "📍 Live GPS tracking active.";
       gpsButton.textContent = "⏹ Stop Live GPS Tracking";
