@@ -1872,6 +1872,26 @@ const gpsButton = document.getElementById("roadWatchGpsButton");
 const gpsStatus = document.getElementById("roadWatchStatus");
 const planRouteButton = document.getElementById("roadWatchPlanRouteButton");
 const destinationInput = document.getElementById("roadWatchDestination");
+  // THOR'S ROAD WATCH - FOLLOW ME CONTROL
+const followMeButton = document.getElementById("roadWatchFollowMeButton");
+let roadWatchFollowMe = false;
+
+if (followMeButton) {
+  followMeButton.addEventListener("click", function() {
+    const location = window.roadWatchCurrentLocation;
+
+    if (!location) {
+      alert("Waiting for your GPS location. Please start GPS tracking.");
+      return;
+    }
+
+    roadWatchFollowMe = true;
+    roadWatchMap.setView([location.lat, location.lon], 15);
+
+    followMeButton.textContent = "📍 Following Me";
+  });
+}
+// END THOR'S ROAD WATCH - FOLLOW ME CONTROL
 gpsButton.addEventListener("click", function() {
   if (roadWatchTrackingId !== null) {
     navigator.geolocation.clearWatch(roadWatchTrackingId);
@@ -1910,9 +1930,9 @@ gpsButton.addEventListener("click", function() {
         roadWatchMarker.setLatLng([lat, lon]);
       }
 
-      if (!roadWatchRouteLine) {
-  roadWatchMap.setView([lat, lon], 15);
-}
+           if (roadWatchFollowMe || !roadWatchRouteLine) {
+        roadWatchMap.setView([lat, lon], 15);
+      }
 
       gpsStatus.textContent = "📍 Live GPS tracking active.";
       gpsButton.textContent = "⏹ Stop Live GPS Tracking";
@@ -1992,7 +2012,12 @@ roadWatchRouteLine = L.geoJSON(routeData.routes[0].geometry, {
     opacity: 0.9
   }
 }).addTo(roadWatchMap);
+// Pause Follow Me so the entire planned route stays visible
+roadWatchFollowMe = false;
 
+if (followMeButton) {
+  followMeButton.textContent = "📍 Follow Me";
+}
 // Show the entire driving route on the map
 roadWatchMap.fitBounds(roadWatchRouteLine.getBounds(), {
   padding: [30, 30]
