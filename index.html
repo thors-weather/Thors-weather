@@ -1951,9 +1951,13 @@ if (planRouteButton && destinationInput) {
     }
     
 // THOR'S ROAD WATCH - ROUTE CALCULATION GOES HERE
-    const destinationSearchUrl =
-  "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
-  encodeURIComponent(destination);
+  const isUSZipCode = /^\d{5}$/.test(destination);
+
+const destinationSearchUrl = isUSZipCode
+  ? "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&postalcode=" +
+    encodeURIComponent(destination)
+  : "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+    encodeURIComponent(destination);
   const destinationResponse = await fetch(destinationSearchUrl);
 const destinationResults = await destinationResponse.json();  
  if (!destinationResults.length) {
