@@ -1941,9 +1941,9 @@ gpsButton.addEventListener("click", function() {
         roadWatchMarker.setLatLng([lat, lon]);
       }
 
-           if (roadWatchFollowMe || !roadWatchRouteLine) {
-        roadWatchMap.setView([lat, lon], 15);
-      }
+         if (roadWatchFollowMe) {
+  roadWatchMap.setView([lat, lon], 15);
+}
 
       gpsStatus.textContent = "📍 Live GPS tracking active.";
       gpsButton.textContent = "⏹ Stop Live GPS Tracking";
