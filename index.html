@@ -1896,10 +1896,14 @@ if (followMeButton) {
       return;
     }
 
-    roadWatchFollowMe = true;
-    roadWatchMap.setView([location.lat, location.lon], 15);
+   roadWatchFollowMe = !roadWatchFollowMe;
 
-    followMeButton.textContent = "📍 Following Me";
+if (roadWatchFollowMe) {
+  roadWatchMap.setView([location.lat, location.lon], 15);
+  followMeButton.textContent = "📍 Following Me";
+} else {
+  followMeButton.textContent = "📍 Follow Me";
+}
   });
 }
 // END THOR'S ROAD WATCH - FOLLOW ME CONTROL
