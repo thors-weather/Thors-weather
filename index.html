@@ -1934,6 +1934,10 @@ gpsButton.addEventListener("click", function() {
   }
 
   gpsStatus.textContent = "Waiting for GPS location...";
+    // THOR'S ROAD WATCH - GPS ACTIVATION VOICE
+  window.roadWatchSpeak(
+    "Attention traveler. Thor's Road Watch is activated. I shall watch the skies during your journey."
+  );
 
   roadWatchTrackingId = navigator.geolocation.watchPosition(
     function(position) {
