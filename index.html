@@ -1010,6 +1010,7 @@ const followMyWeatherButton = document.getElementById("followMyWeatherButton");
   }
 
   followMyWeatherActive = true;
+      followMyWeatherLastUpdate = 0;
   followMyWeatherButton.textContent = "📍 Waiting for GPS...";
 
   followMyWeatherTrackingId = navigator.geolocation.watchPosition(
@@ -1029,6 +1030,9 @@ const followMyWeatherButton = document.getElementById("followMyWeatherButton");
       });
     },
     function(error) {
+            if (followMyWeatherTrackingId !== null) {
+        navigator.geolocation.clearWatch(followMyWeatherTrackingId);
+      }
       followMyWeatherButton.textContent = "📍 Follow My Weather";
       followMyWeatherActive = false;
       followMyWeatherTrackingId = null;
