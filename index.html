@@ -536,8 +536,10 @@ async function getWeather(autoLoad = false, gpsPlace = null) {
   $("status").textContent = "Searching for your location...";
   $("alerts").textContent = "Checking official alerts...";
 $("alertBanner").style.display = "none";
-  try {
-     let place;
+   try {
+    let place = gpsPlace;
+
+    if (!gpsPlace) {
 
     if (/^\d{5}$/.test(city)) {
       // Look up U.S. ZIP codes
@@ -631,13 +633,14 @@ $("alertBanner").style.display = "none";
                 results[0];
       }
     }
-
+    } // END CITY AND ZIP LOOKUP - GPS CAN SKIP THIS
     if (!place) {
       throw new Error("Location not found. Try another city or ZIP code.");
     }
 
     $("location").textContent =
-      place.name + (place.admin1 ? ", " + place.admin1 : "");
+      (place.name || "📍 My Current Location") +
+      (place.admin1 ? ", " + place.admin1 : "");
        
     // Check NOAA lightning density near the selected location
 window.checkNearbyLightning = async function(lat, lon) {
@@ -989,6 +992,57 @@ if (document.readyState === "loading") {
 }
 // END ASGARD AUTOMATIC HOME WEATHER LOADING
 $("search").addEventListener("click", () => getWeather(false));
+// FOLLOW MY WEATHER - GPS BUTTON CONTROL
+const followMyWeatherButton = document.getElementById("followMyWeatherButton");
+  followMyWeatherButton.addEventListener("click", function() {
+  if (followMyWeatherActive) {
+    navigator.geolocation.clearWatch(followMyWeatherTrackingId);
+    followMyWeatherTrackingId = null;
+    followMyWeatherActive = false;
+    followMyWeatherButton.textContent = "📍 Follow My Weather";
+    loadHomeWeatherOnVisit();
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    alert("GPS is not supported on this device.");
+    return;
+  }
+
+  followMyWeatherActive = true;
+  followMyWeatherButton.textContent = "📍 Waiting for GPS...";
+
+  followMyWeatherTrackingId = navigator.geolocation.watchPosition(
+    function(position) {
+      if (!followMyWeatherActive) return;
+
+      const now = Date.now();
+      if (now - followMyWeatherLastUpdate < 300000) return;
+      followMyWeatherLastUpdate = now;
+
+      followMyWeatherButton.textContent = "📍 Following My Weather";
+
+      getWeather(true, {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        name: "📍 My Current Location"
+      });
+    },
+    function(error) {
+      followMyWeatherButton.textContent = "📍 Follow My Weather";
+      followMyWeatherActive = false;
+      followMyWeatherTrackingId = null;
+      $("status").textContent = "GPS unavailable: " + error.message;
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 15000
+    }
+  );
+});
+// END FOLLOW MY WEATHER - GPS BUTTON CONTROL
+  
   document.getElementById("saveHomeWeather").addEventListener("click", function() {
   const location = document.getElementById("city").value.trim();
 
