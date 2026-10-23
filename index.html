@@ -524,11 +524,11 @@ const descriptions = {
   99: "Thunderstorm with heavy hail"
 };
 let lightningMap;
-async function getWeather(autoLoad = false) {
+async function getWeather(autoLoad = false, gpsPlace = null) {
   autoLoad = autoLoad === true;
   const city = $("city").value.trim();
 
-  if (!city) {
+   if (!city && !gpsPlace) {
     $("status").textContent = "Enter a city or ZIP code.";
     return;
   }
