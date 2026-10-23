@@ -2189,6 +2189,84 @@ const routeData = await routeResponse.json();
   alert("Thor could not calculate a driving route to that destination.");
   return;
 }
+    // THOR'S ROAD WATCH - STORE ROUTE FOR WEATHER ALERTS
+window.roadWatchRouteCoordinates =
+  routeData.routes[0].geometry.coordinates;
+
+window.roadWatchRouteDurationSeconds =
+  routeData.routes[0].duration;
+// END THOR'S ROAD WATCH - STORE ROUTE
+    // THOR'S ROAD WATCH - HOURLY RAIN FORECAST
+async function getRoadWatchRainForecast(lat, lon) {
+  const params = new URLSearchParams({
+    latitude: lat,
+    longitude: lon,
+    hourly: "precipitation_probability,weather_code",
+    timezone: "auto",
+    forecast_days: 3
+  });
+
+  const response = await fetch(
+    "https://api.open-meteo.com/v1/forecast?" + params
+  );
+
+  if (!response.ok) {
+    throw new Error("Road Watch rain forecast unavailable.");
+  }
+
+  return await response.json();
+}
+// END THOR'S ROAD WATCH - HOURLY RAIN FORECAST
+    // THOR'S ROAD WATCH - CHECK RAIN ALONG ROUTE
+async function checkRoadWatchRouteRain() {
+  const coordinates = window.roadWatchRouteCoordinates;
+  const results = document.getElementById("roadWatchWeatherResults");
+
+  if (!coordinates || !coordinates.length || !results) return;
+
+  const threshold = Number(
+    document.getElementById("roadWatchRainThreshold")?.value || 40
+  );
+
+  results.textContent = "⚡ Thor is checking rain along your route...";
+
+  const sampleIndexes = [
+    Math.floor(coordinates.length * 0.25),
+    Math.floor(coordinates.length * 0.50),
+    Math.floor(coordinates.length * 0.75)
+  ];
+
+  try {
+    const forecasts = await Promise.all(
+      sampleIndexes.map(async function(index) {
+        const point = coordinates[index];
+        return getRoadWatchRainForecast(point[1], point[0]);
+      })
+    );
+
+    const messages = forecasts.map(function(forecast, index) {
+      const probabilities =
+        forecast.hourly?.precipitation_probability || [];
+
+      const chance = probabilities.length
+        ? Math.max(...probabilities.slice(0, 6).filter(
+            value => typeof value === "number"
+          ), 0)
+        : 0;
+
+      return "Route checkpoint " + (index + 1) +
+        ": up to " + chance + "% chance of rain" +
+        (chance >= threshold ? " ⚠️" : "");
+    });
+
+    results.textContent = messages.join(" | ");
+  } catch (error) {
+    console.error("Road Watch rain forecast error:", error);
+    results.textContent =
+      "Rain forecast unavailable. Please try again.";
+  }
+}
+// END THOR'S ROAD WATCH - CHECK RAIN ALONG ROUTE
  // Remove the previous driving route, if one exists
 if (roadWatchRouteLine) {
   roadWatchMap.removeLayer(roadWatchRouteLine);
@@ -2221,7 +2299,7 @@ if (weatherPanel && weatherResults) {
     "⚡ Thor is preparing weather forecasts along your journey.";
   weatherPanel.style.display = "block";
 }
-
+checkRoadWatchRouteRain();
 // END ROUTE WEATHER PANEL
   });
 }
