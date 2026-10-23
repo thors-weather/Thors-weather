@@ -1970,6 +1970,33 @@ gpsButton.addEventListener("click", function() {
   );
 });
 // END THOR'S ROAD WATCH - LIVE GPS TRACKING
+  // THOR'S ROAD WATCH - VOICE ALERT TEST
+function roadWatchSpeak(message) {
+  if (!("speechSynthesis" in window)) {
+    console.warn("Voice alerts are not supported.");
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const warning = new SpeechSynthesisUtterance(message);
+  warning.lang = "en-US";
+  warning.rate = 0.9;
+  warning.pitch = 0.8;
+  warning.volume = 1;
+
+  window.speechSynthesis.speak(warning);
+}
+// END THOR'S ROAD WATCH - VOICE ALERT TEST
+  // THOR'S ROAD WATCH - TEMPORARY VOICE TEST
+window.addEventListener("keydown", function(event) {
+  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "v") {
+    roadWatchSpeak(
+      "Attention traveler. Thor's Road Watch voice alert system is ready."
+    );
+  }
+});
+// END THOR'S ROAD WATCH - TEMPORARY VOICE TEST
 // THOR'S ROAD WATCH - JOURNEY PLANNER BUTTON
 if (planRouteButton && destinationInput) {
   planRouteButton.addEventListener("click", async function() {
