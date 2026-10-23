@@ -1985,20 +1985,33 @@ gpsButton.addEventListener("click", function() {
   // THOR'S ROAD WATCH - VOICE ALERT TEST
 function roadWatchSpeak(message) {
   if (!("speechSynthesis" in window)) {
-    console.warn("Voice alerts are not supported.");
+    alert("Thor's voice is not supported by this browser.");
     return;
   }
 
   window.speechSynthesis.cancel();
 
   const warning = new SpeechSynthesisUtterance(message);
+
   warning.lang = "en-US";
   warning.rate = 0.9;
   warning.pitch = 0.8;
   warning.volume = 1;
 
+  warning.onstart = function() {
+    console.log("Thor's voice started.");
+  };
+
+  warning.onerror = function(event) {
+    alert("Thor's voice error: " + event.error);
+  };
+
   window.speechSynthesis.speak(warning);
 }
+
+
+
+ 
 // END THOR'S ROAD WATCH - VOICE ALERT TEST
   // THOR'S ROAD WATCH - TEMPORARY VOICE TEST
 window.addEventListener("keydown", function(event) {
