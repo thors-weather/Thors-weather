@@ -958,6 +958,11 @@ if (blitzortungLink) {
       "Could not check alerts. Please try again.";
   }
 }
+  // FOLLOW MY WEATHER - GPS TRACKING STATE
+let followMyWeatherTrackingId = null;
+let followMyWeatherActive = false;
+let followMyWeatherLastUpdate = 0;
+// END FOLLOW MY WEATHER TRACKING STATE
 // ASGARD HOME WEATHER STORAGE
 function getHomeWeatherLocation() {
   return localStorage.getItem("asgardHomeWeather") || "";
