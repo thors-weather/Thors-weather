@@ -481,6 +481,53 @@ input {
   </div>
 </div>
 <!-- END THOR'S ROAD WATCH - ROUTE WEATHER DISPLAY -->
+    <!-- THOR'S ROAD WATCH - RAIN ALERT SETTINGS -->
+<div style="max-width:600px;margin:15px auto;padding:15px;
+background:rgba(10,30,55,0.92);border:2px solid #d9b65f;
+border-radius:12px;color:white;text-align:center;">
+
+  <label for="roadWatchRainThreshold">
+    🌧️ Rain Advisory Sensitivity
+  </label>
+
+  <p style="font-size:14px;">
+    Announce rain when forecast probability reaches:
+  </p>
+
+  <select
+    id="roadWatchRainThreshold"
+    style="padding:10px;border-radius:8px;font-size:16px;"
+  >
+    <option value="30">30%</option>
+    <option value="40" selected>40% (Default)</option>
+    <option value="50">50%</option>
+    <option value="60">60%</option>
+    <option value="70">70%</option>
+    <option value="80">80%</option>
+    <option value="90">90%</option>
+  </select>
+
+  <p style="font-size:12px;">
+    Severe weather warnings are handled separately.
+  </p>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const selector = document.getElementById("roadWatchRainThreshold");
+  if (!selector) return;
+
+  const saved = localStorage.getItem("roadWatchRainThreshold");
+  if (["30","40","50","60","70","80","90"].includes(saved)) {
+    selector.value = saved;
+  }
+
+  selector.addEventListener("change", function() {
+    localStorage.setItem("roadWatchRainThreshold", selector.value);
+  });
+});
+</script>
+<!-- END THOR'S ROAD WATCH - RAIN ALERT SETTINGS -->
 <!-- END ROAD WATCH JOURNEY PLANNER -->
   <!-- END ROAD WATCH EXPANDABLE CONTENT -->
   </div>
